@@ -318,8 +318,11 @@ function App() {
             />
           </div>
         </div>
-        <h1>Générateur d'Ordre de Départ</h1>
-        <p>Annuaire des motifs de départ (OD)</p>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+          <img src="/logo.png" alt="Logo Pompier" style={{ width: '60px', height: 'auto' }} />
+          <h1 style={{ margin: 0 }}>Mes Manoeuvres</h1>
+        </div>
+        <p>Générateur d'Ordre de Départ (OD)</p>
       </header>
 
       <div className="search-container no-print">
