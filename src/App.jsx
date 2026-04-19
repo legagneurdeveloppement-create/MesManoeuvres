@@ -28,7 +28,7 @@ function App() {
   // Fetch communes when department changes
   useEffect(() => {
     if (!departement || departement.length < 2) return;
-    
+
     // Auto-update CTA
     setCta(`ST03-CTA-${departement}`);
 
@@ -43,16 +43,16 @@ function App() {
 
   // Known Centres de Secours for dropdown
   const centres21 = [
-    "LIERNAIS", "SAULIEU", "ARNAY-LE-DUC", "POUILLY-EN-AUXOIS", "NOLAY", "BEAUNE", 
+    "LIERNAIS", "SAULIEU", "ARNAY-LE-DUC", "POUILLY-EN-AUXOIS", "NOLAY", "BEAUNE",
     "PRECY-SOUS-THIL", "DIJON NORD", "DIJON SUD", "DIJON EST", "DIJON TRANSVAAL",
-    "CHENOVE", "CHEVIGNY", "NUITS-ST-GEORGES", "MONTBARD", "CHATILLON-SUR-SEINE", 
+    "CHENOVE", "CHEVIGNY", "NUITS-ST-GEORGES", "MONTBARD", "CHATILLON-SUR-SEINE",
     "AUXONNE", "GENLIS", "SEURRE", "ST-JEAN-DE-LOSNE", "IS-SUR-TILLE", "FONTAINE-FRANCAISE",
     "SOMBERNON", "VELARS-SUR-OUCHE", "VITTEAUX", "VENAREY-LES-LAUMES", "SEMUR-EN-AUXOIS",
     "RECEY-SUR-OURCE", "AIGNAY-LE-DUC", "BAIGNEUX-LES-JUIFS", "ST-SEINE-L'ABBAYE",
     "BLIGNY-SUR-OUCHE", "MIREBEAU-SUR-BEZE", "PONTAILLER", "SELONGEY", "SAULON"
   ];
   const centres71 = [
-    "CHALON-SUR-SAONE", "MACON", "AUTUN", "LE CREUSOT", "MONTCEAU", "LOUHANS", "CHAROLLES", 
+    "CHALON-SUR-SAONE", "MACON", "AUTUN", "LE CREUSOT", "MONTCEAU", "LOUHANS", "CHAROLLES",
     "PARAY-LE-MONIAL", "DIGOIN", "GUEUGNON", "TOURNUS", "CLUNY", "CHAGNY"
   ];
   const centres58 = ["NEVERS", "CHATEAU-CHINON", "CLAMECY", "COSNE-SUR-LOIRE", "DECIZE", "LA CHARITE", "LUZY", "LORMES"];
@@ -63,7 +63,7 @@ function App() {
   const centres39 = ["LONS-LE-SAUNIER", "DOLE", "ST-CLAUDE", "CHAMPAGNOLE", "POLIGNY", "ARBOIS", "SALINS-LES-BAINS"];
 
   let currentCentresList = [];
-  switch(departement) {
+  switch (departement) {
     case '21': currentCentresList = centres21; break;
     case '71': currentCentresList = centres71; break;
     case '58': currentCentresList = centres58; break;
@@ -78,9 +78,9 @@ function App() {
   // Filter data based on search term
   const filteredMotifs = useMemo(() => {
     if (!searchTerm.trim()) return motifsData;
-    
+
     const lowercasedSearch = searchTerm.toLowerCase();
-    return motifsData.filter(item => 
+    return motifsData.filter(item =>
       (item.motif && item.motif.toLowerCase().includes(lowercasedSearch)) ||
       (item.code && item.code.toLowerCase().includes(lowercasedSearch)) ||
       (item.vehicule && item.vehicule.toLowerCase().includes(lowercasedSearch)) ||
@@ -91,11 +91,11 @@ function App() {
   const handleCardClick = (motif) => {
     setSelectedMotif(motif);
     setIsValidated(false);
-    
+
     // Determine default personnel rows based on vehicule type
     let defaultPersonnel = [];
     const veh = motif.vehicule ? motif.vehicule.toUpperCase() : '';
-    
+
     if (veh.includes('VSAV')) {
       defaultPersonnel = [
         { engin: veh, fonction: 'CA', nom: '', matricule: '', bip: '', gr: '' },
@@ -108,9 +108,10 @@ function App() {
         { engin: veh, fonction: 'CA', nom: '', matricule: '', bip: '', gr: '' },
         { engin: veh, fonction: 'COND', nom: '', matricule: '', bip: '', gr: '' },
         { engin: veh, fonction: 'CE', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: veh, fonction: 'BAT', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: veh, fonction: 'EQ', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: veh, fonction: 'EQ', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: veh, fonction: 'EQ BAT 1', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: veh, fonction: 'EQ BAT 2', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: veh, fonction: 'EQ BAL 1', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: veh, fonction: 'EQ BAL 2', nom: '', matricule: '', bip: '', gr: '' },
       ];
     } else {
       defaultPersonnel = [
@@ -222,7 +223,7 @@ function App() {
     setTicketData({
       ...ticketData,
       personnel: [...ticketData.personnel, ...newRows],
-      vehiculeAffiche: ticketData.vehiculeAffiche !== 'SANS VEHICULE' && ticketData.vehiculeAffiche !== '' 
+      vehiculeAffiche: ticketData.vehiculeAffiche !== 'SANS VEHICULE' && ticketData.vehiculeAffiche !== ''
         ? `${ticketData.vehiculeAffiche} + ${newRows[0]?.engin.trim()}`
         : newRows[0]?.engin.trim()
     });
@@ -240,11 +241,11 @@ function App() {
   // Fetch streets dynamically when commune or voie changes
   useEffect(() => {
     if (!ticketData.commune) return;
-    
+
     // We delay the fetch slightly to avoid spamming the API while typing
     const timeoutId = setTimeout(() => {
       const query = ticketData.voie ? `${ticketData.voie} ${ticketData.commune}` : ticketData.commune;
-      
+
       fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&type=street&limit=15`)
         .then(res => res.json())
         .then(data => {
@@ -290,8 +291,8 @@ function App() {
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', gap: '1rem', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--surface-color)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
             <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Dpt :</span>
-            <input 
-              type="text" 
+            <input
+              type="text"
               maxLength="3"
               style={{ width: '40px', background: 'transparent', border: 'none', color: 'white', fontWeight: 'bold', outline: 'none' }}
               value={departement}
@@ -300,8 +301,8 @@ function App() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--surface-color)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
             <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Centre :</span>
-            <input 
-              type="text" 
+            <input
+              type="text"
               list="centres-list"
               style={{ width: '100px', background: 'transparent', border: 'none', color: 'white', fontWeight: 'bold', outline: 'none', textTransform: 'uppercase' }}
               value={caserne}
@@ -310,8 +311,8 @@ function App() {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--surface-color)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
             <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>CTA :</span>
-            <input 
-              type="text" 
+            <input
+              type="text"
               style={{ width: '120px', background: 'transparent', border: 'none', color: 'white', fontWeight: 'bold', outline: 'none', textTransform: 'uppercase' }}
               value={cta}
               onChange={(e) => setCta(e.target.value.toUpperCase())}
@@ -326,9 +327,9 @@ function App() {
       </header>
 
       <div className="search-container no-print">
-        <input 
-          type="text" 
-          className="search-input" 
+        <input
+          type="text"
+          className="search-input"
           placeholder="Rechercher par motif, code, véhicule ou commune..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -338,8 +339,8 @@ function App() {
       <div className="grid-container no-print">
         {filteredMotifs.length > 0 ? (
           filteredMotifs.map((item, index) => (
-            <div 
-              className="card" 
+            <div
+              className="card"
               key={index}
               style={{ animationDelay: `${index * 0.05}s` }}
               onClick={() => handleCardClick(item)}
@@ -369,36 +370,36 @@ function App() {
                   <div className="ticket-print-left">
                     <div className="ticket-print-box">DEPART STANDARD</div>
                     <div className="ticket-print-box">{getCurrentDate()}</div>
-                    
-                    <input 
-                      type="text" 
+
+                    <input
+                      type="text"
                       className="ticket-header-input"
                       style={{ marginTop: '0.5rem', fontWeight: 'bold', fontSize: '1.1rem', background: 'transparent', border: 'none', outline: 'none', width: '100%', fontFamily: 'inherit' }}
                       value={ticketData.numeroDepart}
-                      onChange={(e) => setTicketData({...ticketData, numeroDepart: e.target.value})}
+                      onChange={(e) => setTicketData({ ...ticketData, numeroDepart: e.target.value })}
                     />
 
                     <div className="ticket-print-row">
                       <span>Rang : 1</span>
-                      <div style={{display: 'flex', alignItems: 'center'}}>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
                         <span>traité par : </span>
-                        <input 
-                          type="text" 
+                        <input
+                          type="text"
                           className="ticket-header-input"
                           style={{ marginLeft: '0.5rem', width: '150px', background: 'transparent', border: 'none', outline: 'none', fontFamily: 'inherit', fontSize: '1rem' }}
                           value={ticketData.operateurCta}
-                          onChange={(e) => setTicketData({...ticketData, operateurCta: e.target.value})}
+                          onChange={(e) => setTicketData({ ...ticketData, operateurCta: e.target.value })}
                         />
                       </div>
                     </div>
                   </div>
                   <div className="ticket-print-right">
-                    <input 
-                      type="text" 
-                      className="ticket-vehicule-big" 
+                    <input
+                      type="text"
+                      className="ticket-vehicule-big"
                       style={{ background: 'transparent', border: 'none', color: 'inherit', font: 'inherit', width: '100%', textAlign: 'right', outline: 'none' }}
                       value={ticketData.vehiculeAffiche}
-                      onChange={(e) => setTicketData({...ticketData, vehiculeAffiche: e.target.value})}
+                      onChange={(e) => setTicketData({ ...ticketData, vehiculeAffiche: e.target.value })}
                     />
                   </div>
                 </div>
@@ -411,49 +412,49 @@ function App() {
                 <div className="form-grid">
                   <div className="form-group">
                     <label>Commune</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       list="communes-list"
-                      value={ticketData.commune} 
-                      onChange={(e) => setTicketData({...ticketData, commune: e.target.value})} 
+                      value={ticketData.commune}
+                      onChange={(e) => setTicketData({ ...ticketData, commune: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
                     <label>Voie</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       list="voies-list"
-                      value={ticketData.voie} 
-                      onChange={(e) => setTicketData({...ticketData, voie: e.target.value})} 
+                      value={ticketData.voie}
+                      onChange={(e) => setTicketData({ ...ticketData, voie: e.target.value })}
                     />
                   </div>
                   <div className="form-group">
                     <label>Contact</label>
-                    <input 
-                      type="text" 
+                    <input
+                      type="text"
                       list="contacts-list"
-                      value={ticketData.contact} 
-                      onChange={(e) => setTicketData({...ticketData, contact: e.target.value})} 
+                      value={ticketData.contact}
+                      onChange={(e) => setTicketData({ ...ticketData, contact: e.target.value })}
                     />
                   </div>
                 </div>
 
                 <h3 className="section-title">Observations</h3>
-                <textarea 
-                  className="observations-input" 
+                <textarea
+                  className="observations-input"
                   rows="2"
                   value={ticketData.observations}
-                  onChange={(e) => setTicketData({...ticketData, observations: e.target.value})}
+                  onChange={(e) => setTicketData({ ...ticketData, observations: e.target.value })}
                 ></textarea>
 
                 <div className="section-header-flex">
                   <h3 className="section-title">ARMEMENT DU VEHICULE</h3>
-                  <div style={{display: 'flex', gap: '0.5rem'}} className="no-print">
-                    <select 
-                      className="btn-small" 
-                      style={{background: 'var(--surface-color)', color: 'white', border: '1px solid var(--border-color)', outline: 'none', cursor: 'pointer'}}
+                  <div style={{ display: 'flex', gap: '0.5rem' }} className="no-print">
+                    <select
+                      className="btn-small"
+                      style={{ background: 'var(--surface-color)', color: 'white', border: '1px solid var(--border-color)', outline: 'none', cursor: 'pointer' }}
                       onChange={(e) => {
-                        if(e.target.value) {
+                        if (e.target.value) {
                           addVehicle(e.target.value);
                           e.target.value = '';
                         }
@@ -472,7 +473,7 @@ function App() {
                     <button className="btn-small" onClick={addPersonnelRow}>+ 1 Ligne</button>
                   </div>
                 </div>
-                
+
                 <div className="table-responsive">
                   <table className="personnel-table">
                     <thead>
