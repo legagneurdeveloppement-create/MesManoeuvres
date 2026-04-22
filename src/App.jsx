@@ -165,7 +165,16 @@ function App() {
     newPersonnel[index][field] = value;
 
     // Auto-fill logic when name is selected
-    if (field === 'nom') {
+    if (field === 'nom' && value !== '') {
+      // Check if this person is already assigned to another seat
+      const isAlreadyAssigned = newPersonnel.some((p, i) => i !== index && p.nom === value);
+      if (isAlreadyAssigned) {
+        alert(`⚠️ Attention : ${value} est déjà affecté à un autre poste sur ce départ.`);
+        newPersonnel[index].nom = '';
+        setTicketData({ ...ticketData, personnel: newPersonnel });
+        return;
+      }
+
       const pData = pompiers.find(p => p.nom === value);
       if (pData) {
         newPersonnel[index].matricule = pData.matricule || '';
