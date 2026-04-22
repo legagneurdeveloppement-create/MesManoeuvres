@@ -169,9 +169,13 @@ function App() {
       const pData = pompiers.find(p => p.nom === value);
       if (pData) {
         newPersonnel[index].matricule = pData.matricule || '';
-        newPersonnel[index].fonction = pData.fonction || '';
         newPersonnel[index].grade = pData.grade || '';
         newPersonnel[index].telephone = pData.telephone || '';
+        
+        // Only fill function if the seat doesn't already have one assigned
+        if (!newPersonnel[index].fonction) {
+          newPersonnel[index].fonction = pData.fonction || '';
+        }
       }
     }
 
@@ -399,7 +403,7 @@ function App() {
                 <tr>
                   <th>NOM COMPLET</th>
                   <th>MATRICULE</th>
-                  <th>FONCTION</th>
+                  <th>FONCTIONS (ex: CA, COND)</th>
                   <th>GRADE</th>
                   <th>TELEPHONE</th>
                   <th></th>
