@@ -32,9 +32,19 @@ function App() {
   });
   const [showSettings, setShowSettings] = useState(false);
 
+  // Settings state for vehicles
+  const [customVehicles, setCustomVehicles] = useState(() => {
+    const saved = localStorage.getItem('customVehicles');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   useEffect(() => {
     localStorage.setItem('pompiers', JSON.stringify(pompiers));
   }, [pompiers]);
+
+  useEffect(() => {
+    localStorage.setItem('customVehicles', JSON.stringify(customVehicles));
+  }, [customVehicles]);
 
   // Fetch communes when department changes
   useEffect(() => {
@@ -253,6 +263,14 @@ function App() {
       newRows = [
         { engin: nomEngin.toUpperCase() + ' ', fonction: '', nom: '', matricule: '', grade: '', telephone: '' },
       ];
+    } else {
+      // Check for custom vehicles
+      const customVeh = customVehicles.find(v => v.nom === typeVehicule);
+      if (customVeh) {
+        newRows = Array.from({ length: parseInt(customVeh.personnel) || 1 }, () => ({
+          engin: customVeh.nom + ' ', fonction: '', nom: '', matricule: '', grade: '', telephone: ''
+        }));
+      }
     }
 
     setTicketData({
@@ -462,6 +480,45 @@ function App() {
               setPompiers([...pompiers, { nom: '', matricule: '', fonction: '', grade: '', telephone: '' }]);
             }}>+ Ajouter un Pompier</button>
           </div>
+
+          <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', margin: '3rem 0 2rem 0' }}>Gestion des Véhicules</h2>
+          <div className="table-responsive">
+            <table className="personnel-table settings-table">
+              <thead>
+                <tr>
+                  <th>NOM DE L'ENGIN</th>
+                  <th>NB DE PERSONNEL PAR DÉFAUT</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {customVehicles.map((v, index) => (
+                  <tr key={index}>
+                    <td><input type="text" value={v.nom} onChange={(e) => {
+                      const newV = [...customVehicles];
+                      newV[index].nom = e.target.value.toUpperCase();
+                      setCustomVehicles(newV);
+                    }} /></td>
+                    <td><input type="number" min="1" max="10" value={v.personnel} onChange={(e) => {
+                      const newV = [...customVehicles];
+                      newV[index].personnel = e.target.value;
+                      setCustomVehicles(newV);
+                    }} /></td>
+                    <td>
+                      <button className="btn-delete" onClick={() => {
+                        setCustomVehicles(customVehicles.filter((_, i) => i !== index));
+                      }}>×</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+            <button className="btn btn-print" onClick={() => {
+              setCustomVehicles([...customVehicles, { nom: '', personnel: '1' }]);
+            }}>+ Ajouter un Engin</button>
+          </div>
         </div>
       ) : (
         <>
@@ -610,7 +667,10 @@ function App() {
                       <option value="VLCG">VLCG / VL (1 pers)</option>
                       <option value="CCF">CCF (4 pers)</option>
                       <option value="EPA">EPA / MEA (2 pers)</option>
-                      <option value="AUTRE">AUTRE (Saisie manuelle)</option>
+                      {customVehicles.map((v, i) => (
+                        <option key={i} value={v.nom}>{v.nom} ({v.personnel} pers)</option>
+                      ))}
+                      <option value="AUTRE">AUTRE (Saisie ponctuelle)</option>
                     </select>
                     <button className="btn-small" onClick={addPersonnelRow}>+ 1 Ligne</button>
                   </div>
