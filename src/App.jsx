@@ -38,6 +38,17 @@ function App() {
     return saved ? JSON.parse(saved) : [];
   });
 
+  // Settings state for functions and grades
+  const [availableFonctions, setAvailableFonctions] = useState(() => {
+    const saved = localStorage.getItem('availableFonctions');
+    return saved ? JSON.parse(saved) : ["CA", "COND", "CE", "BAT", "BAL", "EQ 1", "EQ 2", "EQ BAT 1", "EQ BAT 2", "EQ BAL 1", "EQ BAL 2", "COS", "CC", "CHEF D'AGRÈS", "CONDUCTEUR", "ÉQUIPIER"];
+  });
+
+  const [availableGrades, setAvailableGrades] = useState(() => {
+    const saved = localStorage.getItem('availableGrades');
+    return saved ? JSON.parse(saved) : ["Sapeur", "Sapeur 1ère Classe", "Caporal", "Caporal-Chef", "Sergent", "Sergent-Chef", "Adjudant", "Adjudant-Chef", "Lieutenant", "Capitaine", "Commandant", "Lieutenant-Colonel", "Colonel", "Infirmier", "Médecin"];
+  });
+
   useEffect(() => {
     localStorage.setItem('pompiers', JSON.stringify(pompiers));
   }, [pompiers]);
@@ -45,6 +56,14 @@ function App() {
   useEffect(() => {
     localStorage.setItem('customVehicles', JSON.stringify(customVehicles));
   }, [customVehicles]);
+
+  useEffect(() => {
+    localStorage.setItem('availableFonctions', JSON.stringify(availableFonctions));
+  }, [availableFonctions]);
+
+  useEffect(() => {
+    localStorage.setItem('availableGrades', JSON.stringify(availableGrades));
+  }, [availableGrades]);
 
   // Fetch communes when department changes
   useEffect(() => {
@@ -343,39 +362,10 @@ function App() {
         {pompiers.map((p, i) => <option key={i} value={p.nom} />)}
       </datalist>
       <datalist id="fonctions-list">
-        <option value="CA" />
-        <option value="COND" />
-        <option value="CE" />
-        <option value="BAT" />
-        <option value="BAL" />
-        <option value="EQ 1" />
-        <option value="EQ 2" />
-        <option value="EQ BAT 1" />
-        <option value="EQ BAT 2" />
-        <option value="EQ BAL 1" />
-        <option value="EQ BAL 2" />
-        <option value="COS" />
-        <option value="CC" />
-        <option value="CHEF D'AGRÈS" />
-        <option value="CONDUCTEUR" />
-        <option value="ÉQUIPIER" />
+        {availableFonctions.map((f, i) => <option key={i} value={f} />)}
       </datalist>
       <datalist id="grades-list">
-        <option value="Sapeur" />
-        <option value="Sapeur 1ère Classe" />
-        <option value="Caporal" />
-        <option value="Caporal-Chef" />
-        <option value="Sergent" />
-        <option value="Sergent-Chef" />
-        <option value="Adjudant" />
-        <option value="Adjudant-Chef" />
-        <option value="Lieutenant" />
-        <option value="Capitaine" />
-        <option value="Commandant" />
-        <option value="Lieutenant-Colonel" />
-        <option value="Colonel" />
-        <option value="Infirmier" />
-        <option value="Médecin" />
+        {availableGrades.map((g, i) => <option key={i} value={g} />)}
       </datalist>
 
       <header className="header no-print">
@@ -518,6 +508,74 @@ function App() {
             <button className="btn btn-print" onClick={() => {
               setCustomVehicles([...customVehicles, { nom: '', personnel: '1' }]);
             }}>+ Ajouter un Engin</button>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginTop: '3rem' }}>
+            <div>
+              <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', marginBottom: '2rem' }}>Liste des Fonctions</h2>
+              <div className="table-responsive">
+                <table className="personnel-table settings-table">
+                  <thead>
+                    <tr>
+                      <th>NOM DE LA FONCTION</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {availableFonctions.map((f, index) => (
+                      <tr key={index}>
+                        <td><input type="text" value={f} onChange={(e) => {
+                          const newF = [...availableFonctions];
+                          newF[index] = e.target.value.toUpperCase();
+                          setAvailableFonctions(newF);
+                        }} /></td>
+                        <td>
+                          <button className="btn-delete" onClick={() => {
+                            setAvailableFonctions(availableFonctions.filter((_, i) => i !== index));
+                          }}>×</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+                <button className="btn btn-print" onClick={() => setAvailableFonctions([...availableFonctions, ""])}>+ Ajouter une Fonction</button>
+              </div>
+            </div>
+
+            <div>
+              <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', marginBottom: '2rem' }}>Liste des Grades</h2>
+              <div className="table-responsive">
+                <table className="personnel-table settings-table">
+                  <thead>
+                    <tr>
+                      <th>NOM DU GRADE</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {availableGrades.map((g, index) => (
+                      <tr key={index}>
+                        <td><input type="text" value={g} onChange={(e) => {
+                          const newG = [...availableGrades];
+                          newG[index] = e.target.value;
+                          setAvailableGrades(newG);
+                        }} /></td>
+                        <td>
+                          <button className="btn-delete" onClick={() => {
+                            setAvailableGrades(availableGrades.filter((_, i) => i !== index));
+                          }}>×</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+                <button className="btn btn-print" onClick={() => setAvailableGrades([...availableGrades, ""])}>+ Ajouter un Grade</button>
+              </div>
+            </div>
           </div>
         </div>
       ) : (
