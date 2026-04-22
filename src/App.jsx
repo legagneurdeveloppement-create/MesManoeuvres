@@ -247,10 +247,11 @@ function App() {
         { engin: 'CCF ', fonction: 'EQ 1', nom: '', matricule: '', grade: '', telephone: '' },
         { engin: 'CCF ', fonction: 'EQ 2', nom: '', matricule: '', grade: '', telephone: '' },
       ];
-    } else if (typeVehicule === 'EPA') {
+    } else if (typeVehicule === 'AUTRE') {
+      const nomEngin = prompt("Nom de l'engin :");
+      if (!nomEngin) return;
       newRows = [
-        { engin: 'EPA ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'EPA ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: nomEngin.toUpperCase() + ' ', fonction: '', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     }
 
@@ -609,6 +610,7 @@ function App() {
                       <option value="VLCG">VLCG / VL (1 pers)</option>
                       <option value="CCF">CCF (4 pers)</option>
                       <option value="EPA">EPA / MEA (2 pers)</option>
+                      <option value="AUTRE">AUTRE (Saisie manuelle)</option>
                     </select>
                     <button className="btn-small" onClick={addPersonnelRow}>+ 1 Ligne</button>
                   </div>
