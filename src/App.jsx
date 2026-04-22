@@ -310,6 +310,41 @@ function App() {
       <datalist id="pompiers-list">
         {pompiers.map((p, i) => <option key={i} value={p.nom} />)}
       </datalist>
+      <datalist id="fonctions-list">
+        <option value="CA" />
+        <option value="COND" />
+        <option value="CE" />
+        <option value="BAT" />
+        <option value="BAL" />
+        <option value="EQ 1" />
+        <option value="EQ 2" />
+        <option value="EQ BAT 1" />
+        <option value="EQ BAT 2" />
+        <option value="EQ BAL 1" />
+        <option value="EQ BAL 2" />
+        <option value="COS" />
+        <option value="CC" />
+        <option value="CHEF D'AGRÈS" />
+        <option value="CONDUCTEUR" />
+        <option value="ÉQUIPIER" />
+      </datalist>
+      <datalist id="grades-list">
+        <option value="Sapeur" />
+        <option value="Sapeur 1ère Classe" />
+        <option value="Caporal" />
+        <option value="Caporal-Chef" />
+        <option value="Sergent" />
+        <option value="Sergent-Chef" />
+        <option value="Adjudant" />
+        <option value="Adjudant-Chef" />
+        <option value="Lieutenant" />
+        <option value="Capitaine" />
+        <option value="Commandant" />
+        <option value="Lieutenant-Colonel" />
+        <option value="Colonel" />
+        <option value="Infirmier" />
+        <option value="Médecin" />
+      </datalist>
 
       <header className="header no-print">
         <div className="settings-btn-container">
@@ -383,12 +418,12 @@ function App() {
                       newP[index].matricule = e.target.value;
                       setPompiers(newP);
                     }} /></td>
-                    <td><input type="text" value={p.fonction} onChange={(e) => {
+                    <td><input type="text" list="fonctions-list" value={p.fonction} onChange={(e) => {
                       const newP = [...pompiers];
                       newP[index].fonction = e.target.value;
                       setPompiers(newP);
                     }} /></td>
-                    <td><input type="text" value={p.grade} onChange={(e) => {
+                    <td><input type="text" list="grades-list" value={p.grade} onChange={(e) => {
                       const newP = [...pompiers];
                       newP[index].grade = e.target.value;
                       setPompiers(newP);
@@ -585,8 +620,8 @@ function App() {
                           <td><input type="text" value={p.engin} onChange={(e) => updatePersonnel(index, 'engin', e.target.value)} /></td>
                           <td><input type="text" list="pompiers-list" value={p.nom} onChange={(e) => updatePersonnel(index, 'nom', e.target.value)} /></td>
                           <td><input type="text" value={p.matricule} onChange={(e) => updatePersonnel(index, 'matricule', e.target.value)} /></td>
-                          <td><input type="text" value={p.fonction} onChange={(e) => updatePersonnel(index, 'fonction', e.target.value)} /></td>
-                          <td><input type="text" value={p.grade} onChange={(e) => updatePersonnel(index, 'grade', e.target.value)} /></td>
+                          <td><input type="text" list="fonctions-list" value={p.fonction} onChange={(e) => updatePersonnel(index, 'fonction', e.target.value)} /></td>
+                          <td><input type="text" list="grades-list" value={p.grade} onChange={(e) => updatePersonnel(index, 'grade', e.target.value)} /></td>
                           <td><input type="text" value={p.telephone} onChange={(e) => updatePersonnel(index, 'telephone', e.target.value)} /></td>
                           <td className="no-print">
                             <button className="btn-delete" onClick={() => removePersonnelRow(index)}>×</button>
