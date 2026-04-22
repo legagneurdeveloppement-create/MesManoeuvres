@@ -83,11 +83,13 @@ function App() {
 
   // Known Centres de Secours for dropdown
   const centres21 = [
-    "AIGNAY-LE-DUC", "ARNAY-LE-DUC", "AUXONNE", "BAIGNEUX-LES-JUIFS", "BEAUNE", "BLIGNY-SUR-OUCHE",
-    "CHATILLON-SUR-SEINE", "CHENOVE", "CHEVIGNY", "DIJON EST", "DIJON NORD", "DIJON SUD", "DIJON TRANSVAAL",
-    "FONTAINE-FRANCAISE", "GENLIS", "IS-SUR-TILLE", "LIERNAIS", "MIREBEAU-SUR-BEZE", "MONTBARD", "NOLAY",
+    "AIGNAY-LE-DUC", "ARNAY-LE-DUC", "AIGNAY", "AUXONNE", "AISEREY", "ARC-SUR-TILLE", "AISEY",
+    "BAIGNEUX-LES-JUIFS", "BEAUNE", "BLIGNY-SUR-OUCHE", "BRAZEY-EN-PLAINE",
+    "CHATILLON-SUR-SEINE", "DIJON EST", "DIJON NORD", "DIJON SUD", "DIJON TRANSVAAL",
+    "FONTAINE-FRANCAISE", "GENLIS", "IS-SUR-TILLE", "LIERNAIS", "LAIGNES", "LEGLAY-VOULAINES",
+    "MIREBEAU-SUR-BEZE", "MONTBARD", "MONTIGNY-SUR-AUBE", "MEURSAULT", "NOLAY",
     "NUITS-ST-GEORGES", "PONTAILLER", "POUILLY-EN-AUXOIS", "PRECY-SOUS-THIL", "RECEY-SUR-OURCE", "SAULIEU",
-    "SAULON", "SELONGEY", "SEMUR-EN-AUXOIS", "SEURRE", "SOMBERNON", "ST-JEAN-DE-LOSNE", "ST-SEINE-L'ABBAYE",
+    "SELONGEY", "SEMUR-EN-AUXOIS", "SEURRE", "SOMBERNON", "ST-JEAN-DE-LOSNE", "ST-SEINE-L'ABBAYE",
     "VELARS-SUR-OUCHE", "VENAREY-LES-LAUMES", "VITTEAUX"
   ];
   const centres71 = [
@@ -288,6 +290,11 @@ function App() {
         { engin: 'CCF ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
         { engin: 'CCF ', fonction: 'EQ 1', nom: '', matricule: '', grade: '', telephone: '' },
         { engin: 'CCF ', fonction: 'EQ 2', nom: '', matricule: '', grade: '', telephone: '' },
+      ];
+    } else if (typeVehicule === 'EPA') {
+      newRows = [
+        { engin: 'EPA ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'EPA ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     } else if (typeVehicule === 'AUTRE') {
       const nomEngin = prompt("Nom de l'engin :");
