@@ -40,6 +40,38 @@ body {
   text-align: center;
   margin-bottom: 2rem;
   animation: fadeInDown 0.8s ease-out;
+  position: relative;
+}
+
+.settings-btn-container {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+@media (max-width: 768px) {
+  .settings-btn-container {
+    position: static;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.btn-settings {
+  background: var(--surface-color);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-settings:hover {
+  background: var(--surface-hover);
+  border-color: var(--primary-color);
 }
 
 .header h1 {
@@ -138,6 +170,24 @@ body {
   font-size: 1.2rem;
   padding: 3rem;
   grid-column: 1 / -1;
+}
+
+.settings-container {
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  padding: 2rem;
+  border: 1px solid var(--border-color);
+  animation: fadeIn 0.5s ease-out;
+  margin-bottom: 2rem;
+}
+
+.settings-table input {
+  color: white !important;
+}
+
+.settings-table th {
+  background-color: var(--surface-hover) !important;
+  color: var(--text-secondary);
 }
 
 /* Modal Overlay */

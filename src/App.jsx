@@ -25,6 +25,17 @@ function App() {
     personnel: []
   });
 
+  // Settings state for firemen
+  const [pompiers, setPompiers] = useState(() => {
+    const saved = localStorage.getItem('pompiers');
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [showSettings, setShowSettings] = useState(false);
+
+  useEffect(() => {
+    localStorage.setItem('pompiers', JSON.stringify(pompiers));
+  }, [pompiers]);
+
   // Fetch communes when department changes
   useEffect(() => {
     if (!departement || departement.length < 2) return;
@@ -96,25 +107,25 @@ function App() {
 
     if (veh.includes('VSAV')) {
       defaultPersonnel = [
-        { engin: veh, fonction: 'CA', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: veh, fonction: 'COND', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: veh, fonction: 'EQ 1', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: veh, fonction: 'EQ 2', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: veh, fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'EQ 1', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'EQ 2', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     } else if (veh.includes('FPT') || veh.includes('CCR')) {
       defaultPersonnel = [
-        { engin: veh, fonction: 'CA', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: veh, fonction: 'COND', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: veh, fonction: 'CE', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: veh, fonction: 'EQ BAT 1', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: veh, fonction: 'EQ BAT 2', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: veh, fonction: 'EQ BAL 1', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: veh, fonction: 'EQ BAL 2', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: veh, fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'CE', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'EQ BAT 1', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'EQ BAT 2', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'EQ BAL 1', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'EQ BAL 2', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     } else {
       defaultPersonnel = [
-        { engin: veh, fonction: 'CA', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: veh, fonction: 'COND', nom: '', matricule: '', bip: '', gr: '' }
+        { engin: veh, fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' }
       ];
     }
 
@@ -152,6 +163,18 @@ function App() {
   const updatePersonnel = (index, field, value) => {
     const newPersonnel = [...ticketData.personnel];
     newPersonnel[index][field] = value;
+
+    // Auto-fill logic when name is selected
+    if (field === 'nom') {
+      const pData = pompiers.find(p => p.nom === value);
+      if (pData) {
+        newPersonnel[index].matricule = pData.matricule || '';
+        newPersonnel[index].fonction = pData.fonction || '';
+        newPersonnel[index].grade = pData.grade || '';
+        newPersonnel[index].telephone = pData.telephone || '';
+      }
+    }
+
     setTicketData({ ...ticketData, personnel: newPersonnel });
   };
 
@@ -160,7 +183,7 @@ function App() {
       ...ticketData,
       personnel: [
         ...ticketData.personnel,
-        { engin: selectedMotif.vehicule || '', fonction: '', nom: '', matricule: '', bip: '', gr: '' }
+        { engin: selectedMotif.vehicule || '', fonction: '', nom: '', matricule: '', grade: '', telephone: '' }
       ]
     });
   };
@@ -169,52 +192,52 @@ function App() {
     let newRows = [];
     if (typeVehicule === 'VSAV') {
       newRows = [
-        { engin: 'VSAV ', fonction: 'CA', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'VSAV ', fonction: 'COND', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'VSAV ', fonction: 'EQ 1', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'VSAV ', fonction: 'EQ 2', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: 'VSAV ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'VSAV ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'VSAV ', fonction: 'EQ 1', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'VSAV ', fonction: 'EQ 2', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     } else if (typeVehicule === 'VSAV3') {
       newRows = [
-        { engin: 'VSAV ', fonction: 'CA', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'VSAV ', fonction: 'COND', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'VSAV ', fonction: 'EQ', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: 'VSAV ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'VSAV ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'VSAV ', fonction: 'EQ', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     } else if (typeVehicule === 'FPT') {
       newRows = [
-        { engin: 'FPT ', fonction: 'CA', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'FPT ', fonction: 'COND', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'FPT ', fonction: 'CE', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'FPT ', fonction: 'BAT', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'FPT ', fonction: 'EQ 1', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'FPT ', fonction: 'EQ 2', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: 'FPT ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'FPT ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'FPT ', fonction: 'CE', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'FPT ', fonction: 'BAT', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'FPT ', fonction: 'EQ 1', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'FPT ', fonction: 'EQ 2', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     } else if (typeVehicule === 'SR') {
       newRows = [
-        { engin: 'VSR ', fonction: 'CA', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'VSR ', fonction: 'COND', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'VSR ', fonction: 'EQ', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: 'VSR ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'VSR ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'VSR ', fonction: 'EQ', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     } else if (typeVehicule === 'VTU') {
       newRows = [
-        { engin: 'VTU ', fonction: 'CA', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'VTU ', fonction: 'COND', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: 'VTU ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'VTU ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     } else if (typeVehicule === 'VLCG') {
       newRows = [
-        { engin: 'VLCG ', fonction: 'COS', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: 'VLCG ', fonction: 'COS', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     } else if (typeVehicule === 'CCF') {
       newRows = [
-        { engin: 'CCF ', fonction: 'CC', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'CCF ', fonction: 'COND', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'CCF ', fonction: 'EQ 1', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'CCF ', fonction: 'EQ 2', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: 'CCF ', fonction: 'CC', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'CCF ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'CCF ', fonction: 'EQ 1', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'CCF ', fonction: 'EQ 2', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     } else if (typeVehicule === 'EPA') {
       newRows = [
-        { engin: 'EPA ', fonction: 'CA', nom: '', matricule: '', bip: '', gr: '' },
-        { engin: 'EPA ', fonction: 'COND', nom: '', matricule: '', bip: '', gr: '' },
+        { engin: 'EPA ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'EPA ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     }
 
@@ -284,8 +307,16 @@ function App() {
         <option value="Enedis" />
         <option value="GRDF" />
       </datalist>
+      <datalist id="pompiers-list">
+        {pompiers.map((p, i) => <option key={i} value={p.nom} />)}
+      </datalist>
 
       <header className="header no-print">
+        <div className="settings-btn-container">
+          <button className="btn-settings" onClick={() => setShowSettings(!showSettings)}>
+            {showSettings ? '🏠 Accueil' : '⚙️ Paramètres Personnel'}
+          </button>
+        </div>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', gap: '1rem', flexWrap: 'wrap' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', background: 'var(--surface-color)', padding: '0.5rem 1rem', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
             <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Dpt :</span>
@@ -324,38 +355,101 @@ function App() {
         <p>Générateur d'Ordre de Départ (OD)</p>
       </header>
 
-      <div className="search-container no-print">
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Rechercher par motif, code, véhicule ou commune..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      <div className="grid-container no-print">
-        {filteredMotifs.length > 0 ? (
-          filteredMotifs.map((item, index) => (
-            <div
-              className="card"
-              key={index}
-              style={{ animationDelay: `${index * 0.05}s` }}
-              onClick={() => handleCardClick(item)}
-            >
-              <div className="card-header">
-                {item.code ? <span className="code-badge">{item.code}</span> : <span></span>}
-                {item.vehicule && <span className="vehicule-badge">{item.vehicule}</span>}
-              </div>
-              <h2 className="card-title">{item.motif || 'Motif non précisé'}</h2>
-            </div>
-          ))
-        ) : (
-          <div className="no-results">
-            Aucun motif trouvé pour "{searchTerm}"
+      {showSettings ? (
+        <div className="settings-container no-print">
+          <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', marginBottom: '2rem' }}>Gestion du Personnel</h2>
+          <div className="table-responsive">
+            <table className="personnel-table settings-table">
+              <thead>
+                <tr>
+                  <th>NOM COMPLET</th>
+                  <th>MATRICULE</th>
+                  <th>FONCTION</th>
+                  <th>GRADE</th>
+                  <th>TELEPHONE</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {pompiers.map((p, index) => (
+                  <tr key={index}>
+                    <td><input type="text" value={p.nom} onChange={(e) => {
+                      const newP = [...pompiers];
+                      newP[index].nom = e.target.value;
+                      setPompiers(newP);
+                    }} /></td>
+                    <td><input type="text" value={p.matricule} onChange={(e) => {
+                      const newP = [...pompiers];
+                      newP[index].matricule = e.target.value;
+                      setPompiers(newP);
+                    }} /></td>
+                    <td><input type="text" value={p.fonction} onChange={(e) => {
+                      const newP = [...pompiers];
+                      newP[index].fonction = e.target.value;
+                      setPompiers(newP);
+                    }} /></td>
+                    <td><input type="text" value={p.grade} onChange={(e) => {
+                      const newP = [...pompiers];
+                      newP[index].grade = e.target.value;
+                      setPompiers(newP);
+                    }} /></td>
+                    <td><input type="text" value={p.telephone} onChange={(e) => {
+                      const newP = [...pompiers];
+                      newP[index].telephone = e.target.value;
+                      setPompiers(newP);
+                    }} /></td>
+                    <td>
+                      <button className="btn-delete" onClick={() => {
+                        setPompiers(pompiers.filter((_, i) => i !== index));
+                      }}>×</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
-        )}
-      </div>
+          <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
+            <button className="btn btn-print" onClick={() => {
+              setPompiers([...pompiers, { nom: '', matricule: '', fonction: '', grade: '', telephone: '' }]);
+            }}>+ Ajouter un Pompier</button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="search-container no-print">
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Rechercher par motif, code, véhicule ou commune..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          <div className="grid-container no-print">
+            {filteredMotifs.length > 0 ? (
+              filteredMotifs.map((item, index) => (
+                <div
+                  className="card"
+                  key={index}
+                  style={{ animationDelay: `${index * 0.05}s` }}
+                  onClick={() => handleCardClick(item)}
+                >
+                  <div className="card-header">
+                    {item.code ? <span className="code-badge">{item.code}</span> : <span></span>}
+                    {item.vehicule && <span className="vehicule-badge">{item.vehicule}</span>}
+                  </div>
+                  <h2 className="card-title">{item.motif || 'Motif non précisé'}</h2>
+                </div>
+              ))
+            ) : (
+              <div className="no-results">
+                Aucun motif trouvé pour "{searchTerm}"
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
       {/* Modal / Ticket Validation */}
       {selectedMotif && (
@@ -477,11 +571,11 @@ function App() {
                     <thead>
                       <tr>
                         <th>ENGINS</th>
-                        <th>FCT</th>
                         <th>NOM</th>
                         <th>MATRICULE</th>
-                        <th>BIP</th>
-                        <th>GR</th>
+                        <th>FONCTION</th>
+                        <th>GRADE</th>
+                        <th>TEL</th>
                         <th className="no-print"></th>
                       </tr>
                     </thead>
@@ -489,11 +583,11 @@ function App() {
                       {ticketData.personnel.map((p, index) => (
                         <tr key={index}>
                           <td><input type="text" value={p.engin} onChange={(e) => updatePersonnel(index, 'engin', e.target.value)} /></td>
-                          <td><input type="text" value={p.fonction} onChange={(e) => updatePersonnel(index, 'fonction', e.target.value)} /></td>
-                          <td><input type="text" value={p.nom} onChange={(e) => updatePersonnel(index, 'nom', e.target.value)} /></td>
+                          <td><input type="text" list="pompiers-list" value={p.nom} onChange={(e) => updatePersonnel(index, 'nom', e.target.value)} /></td>
                           <td><input type="text" value={p.matricule} onChange={(e) => updatePersonnel(index, 'matricule', e.target.value)} /></td>
-                          <td><input type="text" value={p.bip} onChange={(e) => updatePersonnel(index, 'bip', e.target.value)} /></td>
-                          <td><input type="text" value={p.gr} onChange={(e) => updatePersonnel(index, 'gr', e.target.value)} /></td>
+                          <td><input type="text" value={p.fonction} onChange={(e) => updatePersonnel(index, 'fonction', e.target.value)} /></td>
+                          <td><input type="text" value={p.grade} onChange={(e) => updatePersonnel(index, 'grade', e.target.value)} /></td>
+                          <td><input type="text" value={p.telephone} onChange={(e) => updatePersonnel(index, 'telephone', e.target.value)} /></td>
                           <td className="no-print">
                             <button className="btn-delete" onClick={() => removePersonnelRow(index)}>×</button>
                           </td>
