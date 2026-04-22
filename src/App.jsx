@@ -189,6 +189,19 @@ function App() {
     window.print();
   };
 
+  const toggleFonction = (pompierIndex, fonction) => {
+    const newP = [...pompiers];
+    const currentFonctions = newP[pompierIndex].fonction ? newP[pompierIndex].fonction.split(',').map(f => f.trim()).filter(f => f !== '') : [];
+    
+    if (currentFonctions.includes(fonction)) {
+      newP[pompierIndex].fonction = currentFonctions.filter(f => f !== fonction).join(', ');
+    } else {
+      currentFonctions.push(fonction);
+      newP[pompierIndex].fonction = currentFonctions.join(', ');
+    }
+    setPompiers(newP);
+  };
+
   const updatePersonnel = (index, field, value) => {
     const newPersonnel = [...ticketData.personnel];
     newPersonnel[index][field] = value;
@@ -440,11 +453,30 @@ function App() {
                       newP[index].matricule = e.target.value;
                       setPompiers(newP);
                     }} /></td>
-                    <td><input type="text" list="fonctions-list" value={p.fonction} onChange={(e) => {
-                      const newP = [...pompiers];
-                      newP[index].fonction = e.target.value;
-                      setPompiers(newP);
-                    }} /></td>
+                    <td>
+                      <div className="badges-grid">
+                        {availableFonctions.map((f, fIdx) => (
+                          <span 
+                            key={fIdx} 
+                            className={`badge-item ${p.fonction && p.fonction.includes(f) ? 'active' : ''}`}
+                            onClick={() => toggleFonction(index, f)}
+                          >
+                            {f}
+                          </span>
+                        ))}
+                      </div>
+                      <input 
+                        type="text" 
+                        placeholder="Autre..." 
+                        style={{ marginTop: '0.5rem', fontSize: '0.8rem', borderBottom: '1px solid var(--border-color)' }}
+                        value={p.fonction} 
+                        onChange={(e) => {
+                          const newP = [...pompiers];
+                          newP[index].fonction = e.target.value;
+                          setPompiers(newP);
+                        }} 
+                      />
+                    </td>
                     <td><input type="text" list="grades-list" value={p.grade} onChange={(e) => {
                       const newP = [...pompiers];
                       newP[index].grade = e.target.value;

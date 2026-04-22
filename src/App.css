@@ -190,6 +190,35 @@ body {
   color: var(--text-secondary);
 }
 
+.badges-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  max-width: 300px;
+}
+
+.badge-item {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.badge-item:hover {
+  border-color: var(--primary-color);
+}
+
+.badge-item.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
 /* Modal Overlay */
 .modal-overlay {
   position: fixed;
