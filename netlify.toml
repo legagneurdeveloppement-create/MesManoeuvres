@@ -1,6 +1,0 @@
-[build]
-  command = "ls -la && npm run build"
-  publish = "dist"
-
-
-
