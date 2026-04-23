@@ -219,6 +219,47 @@ body {
   border-color: var(--primary-color);
 }
 
+.permit-badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: var(--surface-hover);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: bold;
+  text-align: center;
+}
+
+.permit-badge:hover {
+  border-color: var(--secondary-color);
+}
+
+.permit-badge.active-vl {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10b981;
+  border-color: #10b981;
+}
+
+.permit-badge.active-pl {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3b82f6;
+  border-color: #3b82f6;
+}
+
+.permit-error {
+  color: #ef4444;
+  font-weight: bold;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
 /* Modal Overlay */
 .modal-overlay {
   position: fixed;

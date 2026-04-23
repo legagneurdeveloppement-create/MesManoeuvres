@@ -2,6 +2,16 @@ import { useState, useMemo, useEffect } from 'react';
 import './App.css';
 import motifsData from './data.json';
 
+const getVehiclePermitType = (engin) => {
+  if (!engin) return 'VL';
+  const e = engin.toUpperCase();
+  // Standard Heavy Vehicles in French Fire Service
+  if (e.includes('FPT') || e.includes('CCR') || e.includes('CCF') || e.includes('EPA') || e.includes('MEA') || e.includes('VSR') || e.includes('SR') || e.includes('DA') || e.includes('VAR')) {
+    return 'PL';
+  }
+  return 'VL';
+};
+
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMotif, setSelectedMotif] = useState(null);
@@ -28,7 +38,12 @@ function App() {
   // Settings state for firemen
   const [pompiers, setPompiers] = useState(() => {
     const saved = localStorage.getItem('pompiers');
-    return saved ? JSON.parse(saved) : [];
+    const parsed = saved ? JSON.parse(saved) : [];
+    return parsed.map(p => ({
+      ...p,
+      permisVL: p.permisVL !== undefined ? p.permisVL : true,
+      permisPL: p.permisPL !== undefined ? p.permisPL : false
+    }));
   });
   const [showSettings, setShowSettings] = useState(false);
 
@@ -381,6 +396,12 @@ function App() {
       <datalist id="pompiers-list">
         {pompiers.map((p, i) => <option key={i} value={p.nom} />)}
       </datalist>
+      <datalist id="pompiers-list-vl">
+        {pompiers.filter(p => p.permisVL).map((p, i) => <option key={i} value={p.nom} />)}
+      </datalist>
+      <datalist id="pompiers-list-pl">
+        {pompiers.filter(p => p.permisPL).map((p, i) => <option key={i} value={p.nom} />)}
+      </datalist>
       <datalist id="fonctions-list">
         {availableFonctions.map((f, i) => <option key={i} value={f} />)}
       </datalist>
@@ -443,6 +464,8 @@ function App() {
                   <th>MATRICULE</th>
                   <th>FONCTIONS (ex: CA, COND)</th>
                   <th>GRADE</th>
+                  <th>VL</th>
+                  <th>PL</th>
                   <th>TELEPHONE</th>
                   <th></th>
                 </tr>
@@ -489,6 +512,30 @@ function App() {
                       newP[index].grade = e.target.value;
                       setPompiers(newP);
                     }} /></td>
+                    <td style={{ textAlign: 'center' }}>
+                      <div 
+                        className={`permit-badge ${p.permisVL ? 'active-vl' : ''}`}
+                        onClick={() => {
+                          const newP = [...pompiers];
+                          newP[index].permisVL = !newP[index].permisVL;
+                          setPompiers(newP);
+                        }}
+                      >
+                        VL
+                      </div>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <div 
+                        className={`permit-badge ${p.permisPL ? 'active-pl' : ''}`}
+                        onClick={() => {
+                          const newP = [...pompiers];
+                          newP[index].permisPL = !newP[index].permisPL;
+                          setPompiers(newP);
+                        }}
+                      >
+                        PL
+                      </div>
+                    </td>
                     <td><input type="text" value={p.telephone} onChange={(e) => {
                       const newP = [...pompiers];
                       newP[index].telephone = e.target.value;
@@ -506,7 +553,7 @@ function App() {
           </div>
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
             <button className="btn btn-print" onClick={() => {
-              setPompiers([...pompiers, { nom: '', matricule: '', fonction: '', grade: '', telephone: '' }]);
+              setPompiers([...pompiers, { nom: '', matricule: '', fonction: '', grade: '', telephone: '', permisVL: true, permisPL: false }]);
             }}>+ Ajouter un Pompier</button>
           </div>
 
@@ -790,7 +837,29 @@ function App() {
                       {ticketData.personnel.map((p, index) => (
                         <tr key={index}>
                           <td><input type="text" value={p.engin} onChange={(e) => updatePersonnel(index, 'engin', e.target.value)} /></td>
-                          <td><input type="text" list="pompiers-list" value={p.nom} onChange={(e) => updatePersonnel(index, 'nom', e.target.value)} /></td>
+                          <td>
+                            <input 
+                              type="text" 
+                              list={(p.fonction === 'COND' || p.fonction === 'CONDUCTEUR') 
+                                ? (getVehiclePermitType(p.engin) === 'PL' ? 'pompiers-list-pl' : 'pompiers-list-vl')
+                                : 'pompiers-list'
+                              }
+                              className={(p.fonction === 'COND' || p.fonction === 'CONDUCTEUR') && p.nom !== '' && (() => {
+                                const pData = pompiers.find(f => f.nom === p.nom);
+                                if (!pData) return false;
+                                const req = getVehiclePermitType(p.engin);
+                                return (req === 'PL' && !pData.permisPL) || (req === 'VL' && !pData.permisVL);
+                              })() ? 'permit-error' : ''}
+                              value={p.nom} 
+                              onChange={(e) => updatePersonnel(index, 'nom', e.target.value)} 
+                            />
+                            {(p.fonction === 'COND' || p.fonction === 'CONDUCTEUR') && p.nom !== '' && (() => {
+                                const pData = pompiers.find(f => f.nom === p.nom);
+                                if (!pData) return false;
+                                const req = getVehiclePermitType(p.engin);
+                                return (req === 'PL' && !pData.permisPL) || (req === 'VL' && !pData.permisVL);
+                              })() && <div style={{ fontSize: '0.6rem', color: '#ef4444', fontWeight: 'bold' }}>PERMIS NON VALIDE</div>}
+                          </td>
                           <td><input type="text" value={p.matricule} onChange={(e) => updatePersonnel(index, 'matricule', e.target.value)} /></td>
                           <td><input type="text" list="fonctions-list" value={p.fonction} onChange={(e) => updatePersonnel(index, 'fonction', e.target.value)} /></td>
                           <td><input type="text" list="grades-list" value={p.grade} onChange={(e) => updatePersonnel(index, 'grade', e.target.value)} /></td>
