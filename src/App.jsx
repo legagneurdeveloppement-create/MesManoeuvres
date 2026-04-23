@@ -56,7 +56,7 @@ function App() {
   // Settings state for functions and grades
   const [availableFonctions, setAvailableFonctions] = useState(() => {
     const saved = localStorage.getItem('availableFonctions');
-    return saved ? JSON.parse(saved) : ["CA", "COND", "CE", "BAT", "BAL", "EQ 1", "EQ 2", "EQ BAT 1", "EQ BAT 2", "EQ BAL 1", "EQ BAL 2", "COS", "CC", "CHEF D'AGRÈS", "CONDUCTEUR", "ÉQUIPIER"];
+    return saved ? JSON.parse(saved) : ["CA", "COND", "CE BAT", "EQ BAT", "CE BAL", "EQ BAL", "CE", "BAT", "BAL", "EQ 1", "EQ 2", "EQ BAT 1", "EQ BAT 2", "EQ BAL 1", "EQ BAL 2", "COS", "CC", "CHEF D'AGRÈS", "CONDUCTEUR", "ÉQUIPIER"];
   });
 
   const [availableGrades, setAvailableGrades] = useState(() => {
@@ -75,6 +75,14 @@ function App() {
   useEffect(() => {
     localStorage.setItem('availableFonctions', JSON.stringify(availableFonctions));
   }, [availableFonctions]);
+
+  // Migration: ensure CE BAT and EQ BAT are available if they were missing
+  useEffect(() => {
+    const missing = ["CE BAT", "EQ BAT", "CE BAL", "EQ BAL"].filter(f => !availableFonctions.includes(f));
+    if (missing.length > 0) {
+      setAvailableFonctions(prev => [...new Set([...missing, ...prev])]);
+    }
+  }, []);
 
   useEffect(() => {
     localStorage.setItem('availableGrades', JSON.stringify(availableGrades));
@@ -162,11 +170,10 @@ function App() {
       defaultPersonnel = [
         { engin: veh, fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
         { engin: veh, fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'CE', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'EQ BAT 1', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'EQ BAT 2', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'EQ BAL 1', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'EQ BAL 2', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'CE BAT', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'EQ BAT', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'CE BAL', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: veh, fonction: 'EQ BAL', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     } else {
       defaultPersonnel = [
@@ -279,10 +286,10 @@ function App() {
       newRows = [
         { engin: 'FPT ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
         { engin: 'FPT ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'FPT ', fonction: 'CE', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'FPT ', fonction: 'BAT', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'FPT ', fonction: 'EQ 1', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'FPT ', fonction: 'EQ 2', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'FPT ', fonction: 'CE BAT', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'FPT ', fonction: 'EQ BAT', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'FPT ', fonction: 'CE BAL', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'FPT ', fonction: 'EQ BAL', nom: '', matricule: '', grade: '', telephone: '' },
       ];
     } else if (typeVehicule === 'SR') {
       newRows = [
@@ -488,7 +495,7 @@ function App() {
                         {availableFonctions.map((f, fIdx) => (
                           <span 
                             key={fIdx} 
-                            className={`badge-item ${p.fonction && p.fonction.includes(f) ? 'active' : ''}`}
+                            className={`badge-item ${p.fonction && p.fonction.split(',').map(s => s.trim()).includes(f) ? 'active' : ''}`}
                             onClick={() => toggleFonction(index, f)}
                           >
                             {f}
