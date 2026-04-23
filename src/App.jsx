@@ -41,7 +41,7 @@ function App() {
     const parsed = saved ? JSON.parse(saved) : [];
     return parsed.map(p => ({
       ...p,
-      permisVL: p.permisVL !== undefined ? p.permisVL : true,
+      permisVL: p.permisVL !== undefined ? p.permisVL : false,
       permisPL: p.permisPL !== undefined ? p.permisPL : false
     }));
   });
@@ -553,7 +553,7 @@ function App() {
           </div>
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
             <button className="btn btn-print" onClick={() => {
-              setPompiers([...pompiers, { nom: '', matricule: '', fonction: '', grade: '', telephone: '', permisVL: true, permisPL: false }]);
+              setPompiers([...pompiers, { nom: '', matricule: '', fonction: '', grade: '', telephone: '', permisVL: false, permisPL: false }]);
             }}>+ Ajouter un Pompier</button>
           </div>
 
