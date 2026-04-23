@@ -20,7 +20,7 @@ function App() {
   // States for dynamic communes and settings
   const [departement, setDepartement] = useState('21'); // Default to Côte-d'Or
   const [communesList, setCommunesList] = useState([]);
-  const [caserne, setCaserne] = useState('LIER');
+  const [caserne, setCaserne] = useState('LIERNAIS');
   const [cta, setCta] = useState('ST03-CTA-21');
 
   // Form state for the ticket
