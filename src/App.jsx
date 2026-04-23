@@ -2,9 +2,14 @@ import { useState, useMemo, useEffect } from 'react';
 import './App.css';
 import motifsData from './data.json';
 
-const getVehiclePermitType = (engin) => {
+const getVehiclePermitType = (engin, customVehicles = []) => {
   if (!engin) return 'VL';
   const e = engin.toUpperCase();
+  
+  // Check if it's a custom vehicle with a specific permit type
+  const custom = customVehicles.find(v => v.nom.toUpperCase() === e.trim());
+  if (custom && custom.permis) return custom.permis;
+
   // Standard Heavy Vehicles in French Fire Service
   if (e.includes('FPT') || e.includes('CCR') || e.includes('CCF') || e.includes('EPA') || e.includes('MEA') || e.includes('VSR') || e.includes('SR') || e.includes('DA') || e.includes('VAR')) {
     return 'PL';
@@ -76,11 +81,13 @@ function App() {
     localStorage.setItem('availableFonctions', JSON.stringify(availableFonctions));
   }, [availableFonctions]);
 
-  // Migration: ensure CE BAT and EQ BAT are available if they were missing
+  // Migration: ensure CE BAT and EQ BAT are available if they were missing, and cleanup duplicates
   useEffect(() => {
     const missing = ["CE BAT", "EQ BAT", "CE BAL", "EQ BAL"].filter(f => !availableFonctions.includes(f));
-    if (missing.length > 0) {
-      setAvailableFonctions(prev => [...new Set([...missing, ...prev])]);
+    const unique = [...new Set(availableFonctions)].filter(f => f.trim() !== "");
+    
+    if (missing.length > 0 || unique.length !== availableFonctions.length) {
+      setAvailableFonctions([...new Set([...missing, ...unique])].sort());
     }
   }, []);
 
@@ -257,6 +264,14 @@ function App() {
     setTicketData({ ...ticketData, personnel: newPersonnel });
   };
 
+  const checkPermitError = (pompierName, engin) => {
+    if (!pompierName) return false;
+    const pData = pompiers.find(f => f.nom === pompierName);
+    if (!pData) return false;
+    const req = getVehiclePermitType(engin, customVehicles);
+    return (req === 'PL' && !pData.permisPL) || (req === 'VL' && !pData.permisVL);
+  };
+
   const addPersonnelRow = () => {
     setTicketData({
       ...ticketData,
@@ -401,19 +416,19 @@ function App() {
         <option value="GRDF" />
       </datalist>
       <datalist id="pompiers-list">
-        {pompiers.map((p, i) => <option key={i} value={p.nom} />)}
+        {pompiers.slice().sort((a, b) => a.nom.localeCompare(b.nom)).map((p, i) => <option key={i} value={p.nom} />)}
       </datalist>
       <datalist id="pompiers-list-vl">
-        {pompiers.filter(p => p.permisVL).map((p, i) => <option key={i} value={p.nom} />)}
+        {pompiers.filter(p => p.permisVL).sort((a, b) => a.nom.localeCompare(b.nom)).map((p, i) => <option key={i} value={p.nom} />)}
       </datalist>
       <datalist id="pompiers-list-pl">
-        {pompiers.filter(p => p.permisPL).map((p, i) => <option key={i} value={p.nom} />)}
+        {pompiers.filter(p => p.permisPL).sort((a, b) => a.nom.localeCompare(b.nom)).map((p, i) => <option key={i} value={p.nom} />)}
       </datalist>
       <datalist id="fonctions-list">
-        {availableFonctions.map((f, i) => <option key={i} value={f} />)}
+        {availableFonctions.slice().sort().map((f, i) => <option key={i} value={f} />)}
       </datalist>
       <datalist id="grades-list">
-        {availableGrades.map((g, i) => <option key={i} value={g} />)}
+        {availableGrades.slice().sort().map((g, i) => <option key={i} value={g} />)}
       </datalist>
 
       <header className="header no-print">
@@ -550,7 +565,9 @@ function App() {
                     }} /></td>
                     <td>
                       <button className="btn-delete" onClick={() => {
-                        setPompiers(pompiers.filter((_, i) => i !== index));
+                        if (confirm(`Supprimer ${p.nom || 'ce pompier'} ?`)) {
+                          setPompiers(pompiers.filter((_, i) => i !== index));
+                        }
                       }}>×</button>
                     </td>
                   </tr>
@@ -570,7 +587,8 @@ function App() {
               <thead>
                 <tr>
                   <th>NOM DE L'ENGIN</th>
-                  <th>NB DE PERSONNEL PAR DÉFAUT</th>
+                  <th>NB PERS.</th>
+                  <th>PERMIS REQUIS</th>
                   <th></th>
                 </tr>
               </thead>
@@ -582,14 +600,30 @@ function App() {
                       newV[index].nom = e.target.value.toUpperCase();
                       setCustomVehicles(newV);
                     }} /></td>
-                    <td><input type="number" min="1" max="10" value={v.personnel} onChange={(e) => {
+                    <td><input type="number" min="1" max="10" value={v.personnel} style={{ width: '60px' }} onChange={(e) => {
                       const newV = [...customVehicles];
                       newV[index].personnel = e.target.value;
                       setCustomVehicles(newV);
                     }} /></td>
                     <td>
+                      <select 
+                        value={v.permis || 'VL'} 
+                        style={{ background: 'transparent', color: 'white', border: '1px solid var(--border-color)', borderRadius: '4px' }}
+                        onChange={(e) => {
+                          const newV = [...customVehicles];
+                          newV[index].permis = e.target.value;
+                          setCustomVehicles(newV);
+                        }}
+                      >
+                        <option value="VL" style={{ color: 'black' }}>VL</option>
+                        <option value="PL" style={{ color: 'black' }}>PL</option>
+                      </select>
+                    </td>
+                    <td>
                       <button className="btn-delete" onClick={() => {
-                        setCustomVehicles(customVehicles.filter((_, i) => i !== index));
+                        if (confirm(`Supprimer l'engin ${v.nom} ?`)) {
+                          setCustomVehicles(customVehicles.filter((_, i) => i !== index));
+                        }
                       }}>×</button>
                     </td>
                   </tr>
@@ -599,7 +633,7 @@ function App() {
           </div>
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
             <button className="btn btn-print" onClick={() => {
-              setCustomVehicles([...customVehicles, { nom: '', personnel: '1' }]);
+              setCustomVehicles([...customVehicles, { nom: '', personnel: '1', permis: 'VL' }]);
             }}>+ Ajouter un Engin</button>
           </div>
 
@@ -848,24 +882,16 @@ function App() {
                             <input 
                               type="text" 
                               list={(p.fonction === 'COND' || p.fonction === 'CONDUCTEUR') 
-                                ? (getVehiclePermitType(p.engin) === 'PL' ? 'pompiers-list-pl' : 'pompiers-list-vl')
+                                ? (getVehiclePermitType(p.engin, customVehicles) === 'PL' ? 'pompiers-list-pl' : 'pompiers-list-vl')
                                 : 'pompiers-list'
                               }
-                              className={(p.fonction === 'COND' || p.fonction === 'CONDUCTEUR') && p.nom !== '' && (() => {
-                                const pData = pompiers.find(f => f.nom === p.nom);
-                                if (!pData) return false;
-                                const req = getVehiclePermitType(p.engin);
-                                return (req === 'PL' && !pData.permisPL) || (req === 'VL' && !pData.permisVL);
-                              })() ? 'permit-error' : ''}
+                              className={(p.fonction === 'COND' || p.fonction === 'CONDUCTEUR') && checkPermitError(p.nom, p.engin) ? 'permit-error' : ''}
                               value={p.nom} 
                               onChange={(e) => updatePersonnel(index, 'nom', e.target.value)} 
                             />
-                            {(p.fonction === 'COND' || p.fonction === 'CONDUCTEUR') && p.nom !== '' && (() => {
-                                const pData = pompiers.find(f => f.nom === p.nom);
-                                if (!pData) return false;
-                                const req = getVehiclePermitType(p.engin);
-                                return (req === 'PL' && !pData.permisPL) || (req === 'VL' && !pData.permisVL);
-                              })() && <div style={{ fontSize: '0.6rem', color: '#ef4444', fontWeight: 'bold' }}>PERMIS NON VALIDE</div>}
+                            {(p.fonction === 'COND' || p.fonction === 'CONDUCTEUR') && checkPermitError(p.nom, p.engin) && (
+                              <div style={{ fontSize: '0.6rem', color: '#ef4444', fontWeight: 'bold' }}>PERMIS NON VALIDE</div>
+                            )}
                           </td>
                           <td><input type="text" value={p.matricule} onChange={(e) => updatePersonnel(index, 'matricule', e.target.value)} /></td>
                           <td><input type="text" list="fonctions-list" value={p.fonction} onChange={(e) => updatePersonnel(index, 'fonction', e.target.value)} /></td>
