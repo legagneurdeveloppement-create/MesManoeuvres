@@ -55,7 +55,29 @@ function App() {
   // Settings state for vehicles
   const [customVehicles, setCustomVehicles] = useState(() => {
     const saved = localStorage.getItem('customVehicles');
-    return saved ? JSON.parse(saved) : [];
+    if (saved) return JSON.parse(saved);
+    
+    // Default list if none saved
+    return [
+      { nom: 'VSAV 01', personnel: '4', permis: 'VL' },
+      { nom: 'CCR 01', personnel: '6', permis: 'PL' },
+      { nom: 'FPT 01', personnel: '6', permis: 'PL' },
+      { nom: 'VSR 01', personnel: '3', permis: 'PL' },
+      { nom: 'VTU 01', personnel: '2', permis: 'VL' },
+      { nom: 'CCF 01', personnel: '4', permis: 'PL' },
+      { nom: 'EPA 01', personnel: '2', permis: 'PL' },
+      { nom: 'VLCG 01', personnel: '1', permis: 'VL' },
+      { nom: 'VL 01', personnel: '1', permis: 'VL' },
+      { nom: 'EMBR 01', personnel: '2', permis: 'VL' },
+      { nom: 'MPR 01', personnel: '1', permis: 'VL' },
+      { nom: 'CD 01', personnel: '1', permis: 'VL' },
+      { nom: 'INF 01', personnel: '1', permis: 'VL' },
+      { nom: 'MED 01', personnel: '1', permis: 'VL' },
+      { nom: 'BEA 01', personnel: '2', permis: 'PL' },
+      { nom: 'CCGC 01', personnel: '1', permis: 'PL' },
+      { nom: 'VIRT 01', personnel: '2', permis: 'PL' },
+      { nom: 'VPL 01', personnel: '1', permis: 'PL' }
+    ];
   });
 
   // Settings state for functions and grades
@@ -99,6 +121,37 @@ function App() {
   useEffect(() => {
     localStorage.setItem('availableGrades', JSON.stringify(availableGrades));
   }, [availableGrades]);
+
+  // Migration for standard vehicles
+  useEffect(() => {
+    const standardList = [
+      { nom: 'VSAV 01', personnel: '4', permis: 'VL' },
+      { nom: 'CCR 01', personnel: '6', permis: 'PL' },
+      { nom: 'FPT 01', personnel: '6', permis: 'PL' },
+      { nom: 'VSR 01', personnel: '3', permis: 'PL' },
+      { nom: 'VTU 01', personnel: '2', permis: 'VL' },
+      { nom: 'CCF 01', personnel: '4', permis: 'PL' },
+      { nom: 'EPA 01', personnel: '2', permis: 'PL' },
+      { nom: 'VLCG 01', personnel: '1', permis: 'VL' },
+      { nom: 'VL 01', personnel: '1', permis: 'VL' },
+      { nom: 'EMBR 01', personnel: '2', permis: 'VL' },
+      { nom: 'MPR 01', personnel: '1', permis: 'VL' },
+      { nom: 'CD 01', personnel: '1', permis: 'VL' },
+      { nom: 'INF 01', personnel: '1', permis: 'VL' },
+      { nom: 'MED 01', personnel: '1', permis: 'VL' },
+      { nom: 'BEA 01', personnel: '2', permis: 'PL' },
+      { nom: 'CCGC 01', personnel: '1', permis: 'PL' },
+      { nom: 'VIRT 01', personnel: '2', permis: 'PL' },
+      { nom: 'VPL 01', personnel: '1', permis: 'PL' }
+    ];
+
+    const existingNames = customVehicles.map(v => v.nom);
+    const missing = standardList.filter(v => !existingNames.includes(v.nom));
+    
+    if (missing.length > 0) {
+      setCustomVehicles(prev => [...prev, ...missing]);
+    }
+  }, []);
 
   // Fetch communes when department changes
   useEffect(() => {
