@@ -3,7 +3,7 @@
     "vehicule": "CCR 01",
     "motif": "ACCIDENT CHUTE DE 2 ROUES",
     "code": "B111",
-    "commune": "BARD LE REGULIER",
+    "commune": "",
     "fonction": "CA",
     "personnel": "AUGE DAMIEN JUINIOR",
     "renfort": ""
@@ -12,7 +12,7 @@
     "vehicule": "VSAV 01",
     "motif": "ACCIDENT 2 ROUES / PIETON",
     "code": "B112",
-    "commune": "BLANOT",
+    "commune": "",
     "fonction": "COND",
     "personnel": "BILLARD ALEXIS",
     "renfort": ""
@@ -21,7 +21,7 @@
     "vehicule": "VTU 01",
     "motif": "AUTRES ACCIDENTS (Quads? Tricicle, etc,)",
     "code": "B119",
-    "commune": "BRAZEY EN MORVAN",
+    "commune": "",
     "fonction": "EQ",
     "personnel": "BOURGEOIS GUILLAUME",
     "renfort": ""
@@ -30,7 +30,7 @@
     "vehicule": "VLGROU 01",
     "motif": "ACCIDENT VL SEULE",
     "code": "B121",
-    "commune": "CENCEREY",
+    "commune": "",
     "fonction": "1EQ",
     "personnel": "CORTOT TONY",
     "renfort": ""
@@ -39,7 +39,7 @@
     "vehicule": "EMBR 01",
     "motif": "ACCIDENT VL SEULE AVEC INCARCERE",
     "code": "B122",
-    "commune": "DIANCEY",
+    "commune": "",
     "fonction": "2EQ",
     "personnel": "FICHOT ANNE-LAURE",
     "renfort": ""
@@ -48,7 +48,7 @@
     "vehicule": "INF 01",
     "motif": "ACCIDENT VL/PIETON",
     "code": "B123",
-    "commune": "LIERNAIS",
+    "commune": "",
     "fonction": "1CE",
     "personnel": "GRUET PASCAL",
     "renfort": ""
@@ -57,7 +57,7 @@
     "vehicule": "MPR 01",
     "motif": "ACCIDENT VL / 2 ROUES",
     "code": "B124",
-    "commune": "MANLAY",
+    "commune": "",
     "fonction": "2CE",
     "personnel": "LANTENOIS EMILIE",
     "renfort": ""
@@ -66,7 +66,7 @@
     "vehicule": "",
     "motif": "ACCIDENT VL/VL",
     "code": "B125",
-    "commune": "MARCHESEUIL",
+    "commune": "",
     "fonction": "",
     "personnel": "LEGAGNEUR JEAN-LUC",
     "renfort": ""
@@ -75,7 +75,7 @@
     "vehicule": "",
     "motif": "ACCIDENT VL / VL AVEC INCARCERE",
     "code": "B126",
-    "commune": "SAVILLY",
+    "commune": "",
     "fonction": "",
     "personnel": "LEGAGNEUR JULIEN",
     "renfort": ""
@@ -84,7 +84,7 @@
     "vehicule": "",
     "motif": "ACCIDENT VL TOMBEE A L EAU",
     "code": "B127",
-    "commune": "SUSSEY",
+    "commune": "",
     "fonction": "",
     "personnel": "LUBREZ CHRISTIAN",
     "renfort": ""
@@ -93,7 +93,7 @@
     "vehicule": "",
     "motif": "ACCIDENT VL AVEC MD (Chim, Bio, Rad)",
     "code": "B128",
-    "commune": "ST MARTIN DE LA MER",
+    "commune": "",
     "fonction": "",
     "personnel": "MANDET PHILIPPE",
     "renfort": ""
@@ -102,7 +102,7 @@
     "vehicule": "",
     "motif": "ACCIDENT PL SEUL",
     "code": "B131",
-    "commune": "VIANGES",
+    "commune": "",
     "fonction": "",
     "personnel": "MARTEL ALEXIS",
     "renfort": ""
@@ -111,7 +111,7 @@
     "vehicule": "",
     "motif": "ACCIDENT PL / PIETON",
     "code": "B132",
-    "commune": "VILLIERS EN MORVAN",
+    "commune": "",
     "fonction": "",
     "personnel": "MEURIAU YANN",
     "renfort": ""
