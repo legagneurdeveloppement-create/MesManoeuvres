@@ -812,48 +812,63 @@ function App() {
                 <h3 className="section-title">Localisation du sinistre</h3>
                 <div className="form-grid">
                   <div className="form-group">
-                    <label>Commune</label>
+                    <label htmlFor="input-commune">Commune</label>
                     <input
                       type="text"
+                      id="input-commune"
                       ref={communeRef}
                       list="communes-list"
                       value={ticketData.commune}
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => setTicketData({ ...ticketData, commune: e.target.value })}
                     />
-                    <div className="dropdown-arrow-icon" onClick={(e) => {
-                      const input = e.currentTarget.parentElement.querySelector('input');
-                      if (input && input.showPicker) try { input.showPicker(); } catch(err) {}
+                    <div className="dropdown-arrow-icon" onClick={() => {
+                      setTicketData(prev => ({ ...prev, commune: '' }));
+                      setTimeout(() => {
+                        if (communeRef.current && communeRef.current.showPicker) {
+                          try { communeRef.current.showPicker(); } catch(err) {}
+                        }
+                      }, 50);
                     }}></div>
                   </div>
                   <div className="form-group">
-                    <label>Voie</label>
+                    <label htmlFor="input-voie">Voie</label>
                     <input
                       type="text"
+                      id="input-voie"
                       ref={voieRef}
                       list="voies-list"
                       value={ticketData.voie}
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => setTicketData({ ...ticketData, voie: e.target.value })}
                     />
-                    <div className="dropdown-arrow-icon" onClick={(e) => {
-                      const input = e.currentTarget.parentElement.querySelector('input');
-                      if (input && input.showPicker) try { input.showPicker(); } catch(err) {}
+                    <div className="dropdown-arrow-icon" onClick={() => {
+                      setTicketData(prev => ({ ...prev, voie: '' }));
+                      setTimeout(() => {
+                        if (voieRef.current && voieRef.current.showPicker) {
+                          try { voieRef.current.showPicker(); } catch(err) {}
+                        }
+                      }, 50);
                     }}></div>
                   </div>
                   <div className="form-group">
-                    <label>Contact</label>
+                    <label htmlFor="input-contact">Contact</label>
                     <input
                       type="text"
+                      id="input-contact"
                       ref={contactRef}
                       list="contacts-list"
                       value={ticketData.contact}
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => setTicketData({ ...ticketData, contact: e.target.value })}
                     />
-                    <div className="dropdown-arrow-icon" onClick={(e) => {
-                      const input = e.currentTarget.parentElement.querySelector('input');
-                      if (input && input.showPicker) try { input.showPicker(); } catch(err) {}
+                    <div className="dropdown-arrow-icon" onClick={() => {
+                      setTicketData(prev => ({ ...prev, contact: '' }));
+                      setTimeout(() => {
+                        if (contactRef.current && contactRef.current.showPicker) {
+                          try { contactRef.current.showPicker(); } catch(err) {}
+                        }
+                      }, 50);
                     }}></div>
                   </div>
                 </div>
