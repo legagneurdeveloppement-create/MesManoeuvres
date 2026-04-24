@@ -921,7 +921,6 @@ function App() {
                         <th>MATRICULE</th>
                         <th>FONCTION</th>
                         <th>GRADE</th>
-                        <th>TEL</th>
                         <th className="no-print"></th>
                       </tr>
                     </thead>
@@ -947,7 +946,6 @@ function App() {
                           <td><input type="text" value={p.matricule} onChange={(e) => updatePersonnel(index, 'matricule', e.target.value)} /></td>
                           <td><input type="text" list="fonctions-list" value={p.fonction} onChange={(e) => updatePersonnel(index, 'fonction', e.target.value)} /></td>
                           <td><input type="text" list="grades-list" value={p.grade} onChange={(e) => updatePersonnel(index, 'grade', e.target.value)} /></td>
-                          <td><input type="text" value={p.telephone} onChange={(e) => updatePersonnel(index, 'telephone', e.target.value)} /></td>
                           <td className="no-print">
                             <button className="btn-delete" onClick={() => removePersonnelRow(index)}>×</button>
                           </td>
