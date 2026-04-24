@@ -376,28 +376,26 @@ body {
   color: inherit;
 }
 
-/* Custom Dropdown Arrow for datalist inputs */
-.form-group:has(input[list]) {
-  position: relative;
+/* Functional Dropdown Arrow */
+.dropdown-arrow-icon {
+  width: 30px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-}
-
-.form-group:has(input[list])::after {
-  content: "";
-  width: 14px;
-  height: 14px;
-  margin-right: 8px;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-size: contain;
+  background-size: 14px;
   background-repeat: no-repeat;
   background-position: center;
-  pointer-events: none;
-  flex-shrink: 0;
-  opacity: 0.6;
+  opacity: 0.5;
+  transition: all 0.2s;
+  border-left: 1px solid #e5e7eb;
 }
 
-.form-group:has(input[list]):hover::after {
+.dropdown-arrow-icon:hover {
   opacity: 1;
+  background-color: #f8fafc;
 }
 
 /* Hide native indicators to avoid duplicates and inconsistent styling */

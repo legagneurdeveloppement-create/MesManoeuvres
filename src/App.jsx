@@ -821,6 +821,10 @@ function App() {
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => setTicketData({ ...ticketData, commune: e.target.value })}
                     />
+                    <div className="dropdown-arrow-icon" onClick={(e) => {
+                      const input = e.currentTarget.parentElement.querySelector('input');
+                      if (input && input.showPicker) try { input.showPicker(); } catch(err) {}
+                    }}></div>
                   </div>
                   <div className="form-group">
                     <label>Voie</label>
@@ -832,6 +836,10 @@ function App() {
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => setTicketData({ ...ticketData, voie: e.target.value })}
                     />
+                    <div className="dropdown-arrow-icon" onClick={(e) => {
+                      const input = e.currentTarget.parentElement.querySelector('input');
+                      if (input && input.showPicker) try { input.showPicker(); } catch(err) {}
+                    }}></div>
                   </div>
                   <div className="form-group">
                     <label>Contact</label>
@@ -843,6 +851,10 @@ function App() {
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => setTicketData({ ...ticketData, contact: e.target.value })}
                     />
+                    <div className="dropdown-arrow-icon" onClick={(e) => {
+                      const input = e.currentTarget.parentElement.querySelector('input');
+                      if (input && input.showPicker) try { input.showPicker(); } catch(err) {}
+                    }}></div>
                   </div>
                 </div>
 
