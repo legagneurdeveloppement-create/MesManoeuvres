@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import './App.css';
 import motifsData from './data.json';
 
@@ -68,6 +68,11 @@ function App() {
     const saved = localStorage.getItem('availableGrades');
     return saved ? JSON.parse(saved) : ["Sapeur", "Sapeur 1ère Classe", "Caporal", "Caporal-Chef", "Sergent", "Sergent-Chef", "Adjudant", "Adjudant-Chef", "Lieutenant", "Capitaine", "Commandant", "Lieutenant-Colonel", "Colonel", "Infirmier", "Médecin"];
   });
+
+  // Refs for auto-focus
+  const communeRef = useRef(null);
+  const voieRef = useRef(null);
+  const contactRef = useRef(null);
 
   useEffect(() => {
     localStorage.setItem('pompiers', JSON.stringify(pompiers));
@@ -203,6 +208,19 @@ function App() {
       personnel: defaultPersonnel
     });
   };
+
+  // Auto-focus logic when motif is selected
+  useEffect(() => {
+    if (selectedMotif) {
+      setTimeout(() => {
+        if (selectedMotif.commune) {
+          voieRef.current?.focus();
+        } else {
+          communeRef.current?.focus();
+        }
+      }, 100);
+    }
+  }, [selectedMotif]);
 
   const handleCloseModal = () => {
     setSelectedMotif(null);
@@ -797,8 +815,10 @@ function App() {
                     <label>Commune</label>
                     <input
                       type="text"
+                      ref={communeRef}
                       list="communes-list"
                       value={ticketData.commune}
+                      onFocus={(e) => e.target.select()}
                       onChange={(e) => setTicketData({ ...ticketData, commune: e.target.value })}
                     />
                   </div>
@@ -806,8 +826,10 @@ function App() {
                     <label>Voie</label>
                     <input
                       type="text"
+                      ref={voieRef}
                       list="voies-list"
                       value={ticketData.voie}
+                      onFocus={(e) => e.target.select()}
                       onChange={(e) => setTicketData({ ...ticketData, voie: e.target.value })}
                     />
                   </div>
@@ -815,8 +837,10 @@ function App() {
                     <label>Contact</label>
                     <input
                       type="text"
+                      ref={contactRef}
                       list="contacts-list"
                       value={ticketData.contact}
+                      onFocus={(e) => e.target.select()}
                       onChange={(e) => setTicketData({ ...ticketData, contact: e.target.value })}
                     />
                   </div>
