@@ -183,6 +183,18 @@ body {
 
 .settings-table input {
   color: white !important;
+  padding: 0.8rem 0.5rem;
+  font-size: 1.05rem;
+}
+
+.settings-table th:nth-child(1), 
+.settings-table td:nth-child(1) {
+  min-width: 250px;
+}
+
+.settings-table th:nth-child(4), 
+.settings-table td:nth-child(4) {
+  min-width: 200px;
 }
 
 .settings-table th {
@@ -445,7 +457,8 @@ input::-webkit-calendar-picker-indicator {
   outline: none;
   background: transparent;
   font-family: inherit;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  padding: 0.4rem 0;
 }
 
 .btn-delete {
