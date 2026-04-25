@@ -325,12 +325,20 @@ function App() {
     setAvailableGrades(newG);
   };
 
+  const normalizeFunction = (f) => {
+    if (!f) return "";
+    return f.trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+  };
+
   const isFonctionAllowed = (gradeNom, fonctionNom) => {
     if (!gradeNom || !fonctionNom) return true;
     const grade = availableGrades.find(g => g.nom === gradeNom);
     if (!grade || !grade.fonctions || grade.fonctions.length === 0) return true;
-    const cleanFonction = fonctionNom.trim().toUpperCase();
-    return grade.fonctions.some(f => f.toUpperCase() === cleanFonction);
+    const nf = normalizeFunction(fonctionNom);
+    return grade.fonctions.some(f => {
+      const gnf = normalizeFunction(f);
+      return gnf === nf || (nf.startsWith('EQ') && gnf.startsWith('EQ')) || (nf.startsWith('EQ') && gnf === 'EQUIPIER') || (nf === 'EQUIPIER' && gnf.startsWith('EQ'));
+    });
   };
 
   const updatePersonnel = (index, field, value) => {
@@ -486,12 +494,16 @@ function App() {
         
         const pFonctions = p.fonction ? p.fonction.split(',').map(s => s.trim().toUpperCase()) : [];
         
-        // Flexible matching for EQ (Équipier)
-        const isEqSeat = seatFonction.startsWith('EQ') || seatFonction === 'ÉQUIPIER';
-        const pHasEq = pFonctions.some(f => f.startsWith('EQ') || f === 'ÉQUIPIER');
+        const nfSeat = normalizeFunction(seatFonction);
+        const isEqSeat = nfSeat.startsWith('EQ') || nfSeat === 'EQUIPIER';
         
-        const matchesFonction = pFonctions.includes(seatFonction) || 
-                               seatFonction === '' || 
+        const pHasEq = pFonctions.some(f => {
+          const nfP = normalizeFunction(f);
+          return nfP.startsWith('EQ') || nfP === 'EQUIPIER';
+        });
+        
+        const matchesFonction = pFonctions.some(f => normalizeFunction(f) === nfSeat) || 
+                               nfSeat === '' || 
                                (isEqSeat && pHasEq);
         
         // Check if grade allows this function
