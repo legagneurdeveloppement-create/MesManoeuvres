@@ -475,14 +475,13 @@ function App() {
     const newPersonnel = [...ticketData.personnel];
     const assignedNames = new Set();
 
-    // First pass: Track names already assigned manually
-    newPersonnel.forEach(row => {
-      if (row.nom) assignedNames.add(row.nom);
+    // Clear existing names to allow re-randomization on each click
+    newPersonnel.forEach((row, index) => {
+      newPersonnel[index] = { ...row, nom: '', matricule: '', grade: '', telephone: '' };
     });
 
-    // Second pass: Fill empty rows
+    // Fill rows
     newPersonnel.forEach((row, index) => {
-      if (row.nom) return; // Keep manual assignment
 
       const seatFonction = row.fonction ? row.fonction.trim().toUpperCase() : '';
       const engin = row.engin ? row.engin.trim() : '';
