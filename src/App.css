@@ -189,12 +189,12 @@ body {
 
 .settings-table th:nth-child(1), 
 .settings-table td:nth-child(1) {
-  min-width: 250px;
+  min-width: 320px;
 }
 
 .settings-table th:nth-child(4), 
 .settings-table td:nth-child(4) {
-  min-width: 200px;
+  min-width: 220px;
 }
 
 .settings-table th {
