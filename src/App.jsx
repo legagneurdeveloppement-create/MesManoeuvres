@@ -51,7 +51,7 @@ function App() {
       ...p,
       permisVL: p.permisVL !== undefined ? p.permisVL : false,
       permisPL: p.permisPL !== undefined ? p.permisPL : false
-    }));
+    })).sort((a, b) => (a.nom || "").localeCompare(b.nom || ""));
   });
   const [showSettings, setShowSettings] = useState(false);
 
@@ -620,11 +620,17 @@ function App() {
               <tbody>
                 {pompiers.map((p, index) => (
                   <tr key={index}>
-                    <td><input type="text" value={p.nom} onChange={(e) => {
-                      const newP = [...pompiers];
-                      newP[index].nom = e.target.value;
-                      setPompiers(newP);
-                    }} /></td>
+                    <td><input type="text" value={p.nom} 
+                      onChange={(e) => {
+                        const newP = [...pompiers];
+                        newP[index].nom = e.target.value;
+                        setPompiers(newP);
+                      }}
+                      onBlur={() => {
+                        const sorted = [...pompiers].sort((a, b) => (a.nom || "").localeCompare(b.nom || ""));
+                        setPompiers(sorted);
+                      }} 
+                    /></td>
                     <td><input type="text" value={p.matricule} onChange={(e) => {
                       const newP = [...pompiers];
                       newP[index].matricule = e.target.value;
@@ -642,17 +648,7 @@ function App() {
                           </span>
                         ))}
                       </div>
-                      <input 
-                        type="text" 
-                        placeholder="Autre..." 
-                        style={{ marginTop: '0.5rem', fontSize: '0.8rem', borderBottom: '1px solid var(--border-color)' }}
-                        value={p.fonction} 
-                        onChange={(e) => {
-                          const newP = [...pompiers];
-                          newP[index].fonction = e.target.value;
-                          setPompiers(newP);
-                        }} 
-                      />
+                      {/* Input removed as per user request (redundant with badges) */}
                     </td>
                     <td><input type="text" list="grades-list" value={p.grade} onChange={(e) => {
                       const newP = [...pompiers];
