@@ -91,7 +91,11 @@ function App() {
 
   const [availableGrades, setAvailableGrades] = useState(() => {
     const saved = localStorage.getItem('availableGrades');
-    return saved ? JSON.parse(saved) : ["Sapeur", "Sapeur 1ère Classe", "Caporal", "Caporal-Chef", "Sergent", "Sergent-Chef", "Adjudant", "Adjudant-Chef", "Lieutenant", "Capitaine", "Commandant", "Lieutenant-Colonel", "Colonel", "Infirmier", "Médecin"];
+    const parsed = saved ? JSON.parse(saved) : ["Sapeur", "Sapeur 1ère Classe", "Caporal", "Caporal-Chef", "Sergent", "Sergent-Chef", "Adjudant", "Adjudant-Chef", "Lieutenant", "Capitaine", "Commandant", "Lieutenant-Colonel", "Colonel", "Infirmier", "Médecin"];
+    return parsed.map(g => {
+      if (typeof g === 'string') return { nom: g, fonctions: [] };
+      return { ...g, fonctions: g.fonctions || [] };
+    });
   });
 
   // Refs for auto-focus
@@ -308,6 +312,25 @@ function App() {
       newP[pompierIndex].fonction = currentFonctions.join(', ');
     }
     setPompiers(newP);
+  };
+
+  const toggleGradeFonction = (gradeIndex, fonction) => {
+    const newG = [...availableGrades];
+    const current = newG[gradeIndex].fonctions || [];
+    if (current.includes(fonction)) {
+      newG[gradeIndex].fonctions = current.filter(f => f !== fonction);
+    } else {
+      newG[gradeIndex].fonctions = [...current, fonction];
+    }
+    setAvailableGrades(newG);
+  };
+
+  const isFonctionAllowed = (gradeNom, fonctionNom) => {
+    if (!gradeNom || !fonctionNom) return true;
+    const grade = availableGrades.find(g => g.nom === gradeNom);
+    if (!grade || !grade.fonctions || grade.fonctions.length === 0) return true;
+    const cleanFonction = fonctionNom.trim().toUpperCase();
+    return grade.fonctions.some(f => f.toUpperCase() === cleanFonction);
   };
 
   const updatePersonnel = (index, field, value) => {
@@ -553,7 +576,7 @@ function App() {
         {availableFonctions.slice().sort().map((f, i) => <option key={i} value={f} />)}
       </datalist>
       <datalist id="grades-list">
-        {availableGrades.slice().sort().map((g, i) => <option key={i} value={g} />)}
+        {availableGrades.slice().sort((a, b) => a.nom.localeCompare(b.nom)).map((g, i) => <option key={i} value={typeof g === 'string' ? g : g.nom} />)}
       </datalist>
 
       <header className="header no-print">
@@ -799,17 +822,31 @@ function App() {
                   <thead>
                     <tr>
                       <th>NOM DU GRADE</th>
+                      <th>FONCTIONS AUTORISÉES</th>
                       <th></th>
                     </tr>
                   </thead>
                   <tbody>
                     {availableGrades.map((g, index) => (
                       <tr key={index}>
-                        <td><input type="text" value={g} onChange={(e) => {
+                        <td><input type="text" value={g.nom} onChange={(e) => {
                           const newG = [...availableGrades];
-                          newG[index] = e.target.value;
+                          newG[index].nom = e.target.value;
                           setAvailableGrades(newG);
                         }} /></td>
+                        <td>
+                          <div className="badges-grid">
+                            {availableFonctions.map((f, fIdx) => (
+                              <span 
+                                key={fIdx} 
+                                className={`badge-item ${g.fonctions && g.fonctions.includes(f) ? 'active' : ''}`}
+                                onClick={() => toggleGradeFonction(index, f)}
+                              >
+                                {f}
+                              </span>
+                            ))}
+                          </div>
+                        </td>
                         <td>
                           <button className="btn-delete" onClick={() => {
                             setAvailableGrades(availableGrades.filter((_, i) => i !== index));
@@ -821,7 +858,7 @@ function App() {
                 </table>
               </div>
               <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
-                <button className="btn btn-print" onClick={() => setAvailableGrades([...availableGrades, ""])}>+ Ajouter un Grade</button>
+                <button className="btn btn-print" onClick={() => setAvailableGrades([...availableGrades, { nom: "", fonctions: [] }])}>+ Ajouter un Grade</button>
               </div>
             </div>
           </div>
@@ -1083,7 +1120,18 @@ function App() {
                             )}
                           </td>
                           <td><input type="text" value={p.matricule} onChange={(e) => updatePersonnel(index, 'matricule', e.target.value)} /></td>
-                          <td><input type="text" list="fonctions-list" value={p.fonction} onChange={(e) => updatePersonnel(index, 'fonction', e.target.value)} /></td>
+                          <td>
+                            <input 
+                              type="text" 
+                              list="fonctions-list" 
+                              className={!isFonctionAllowed(p.grade, p.fonction) ? 'permit-error' : ''}
+                              value={p.fonction} 
+                              onChange={(e) => updatePersonnel(index, 'fonction', e.target.value)} 
+                            />
+                            {!isFonctionAllowed(p.grade, p.fonction) && (
+                              <div style={{ fontSize: '0.6rem', color: '#ef4444', fontWeight: 'bold' }}>FONCTION NON AUTORISÉE</div>
+                            )}
+                          </td>
                           <td><input type="text" list="grades-list" value={p.grade} onChange={(e) => updatePersonnel(index, 'grade', e.target.value)} /></td>
                           <td className="no-print">
                             <button className="btn-delete" onClick={() => removePersonnelRow(index)}>×</button>
