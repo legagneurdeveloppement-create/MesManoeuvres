@@ -1059,11 +1059,11 @@ function App() {
                   <table className="personnel-table">
                     <thead>
                       <tr>
-                        <th style={{ width: '10%' }}>ENGINS</th>
-                        <th style={{ width: '38%' }}>NOM</th>
+                        <th style={{ width: '9%' }}>ENGINS</th>
+                        <th style={{ width: '35%' }}>NOM</th>
                         <th style={{ width: '5%' }}>MATRICULE</th>
-                        <th style={{ width: '11%' }}>FONCTION</th>
-                        <th style={{ width: '31%' }}>GRADE</th>
+                        <th style={{ width: '18%' }}>FONCTION</th>
+                        <th style={{ width: '28%' }}>GRADE</th>
                         <th className="no-print" style={{ width: '5%' }}></th>
                       </tr>
                     </thead>
