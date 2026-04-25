@@ -485,14 +485,24 @@ function App() {
         if (assignedNames.has(p.nom)) return false;
         
         const pFonctions = p.fonction ? p.fonction.split(',').map(s => s.trim().toUpperCase()) : [];
-        const matchesFonction = pFonctions.includes(seatFonction) || seatFonction === '';
         
+        // Flexible matching for EQ (Équipier)
+        const isEqSeat = seatFonction.startsWith('EQ') || seatFonction === 'ÉQUIPIER';
+        const pHasEq = pFonctions.some(f => f.startsWith('EQ') || f === 'ÉQUIPIER');
+        
+        const matchesFonction = pFonctions.includes(seatFonction) || 
+                               seatFonction === '' || 
+                               (isEqSeat && pHasEq);
+        
+        // Check if grade allows this function
+        const matchesGrade = isFonctionAllowed(p.grade, seatFonction);
+
         let matchesPermit = true;
         if (seatFonction === 'COND' || seatFonction === 'CONDUCTEUR') {
           matchesPermit = (reqPermit === 'PL' ? p.permisPL : p.permisVL);
         }
 
-        return matchesFonction && matchesPermit;
+        return matchesFonction && matchesGrade && matchesPermit;
       });
 
       if (compatible.length > 0) {
