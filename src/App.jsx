@@ -35,7 +35,10 @@ function App() {
     vehiculeAffiche: '',
     commune: '',
     voie: '',
+    numeroPlan: '',
+    coordonnees: '',
     contact: '',
+    dateAppel: '',
     observations: '',
     personnel: []
   });
@@ -256,7 +259,10 @@ function App() {
       vehiculeAffiche: motif.vehicule || 'SANS VEHICULE',
       commune: motif.commune || '',
       voie: '',
+      numeroPlan: '',
+      coordonnees: '',
       contact: '',
+      dateAppel: getCurrentDate(),
       observations: '',
       personnel: defaultPersonnel
     });
@@ -904,6 +910,7 @@ function App() {
                       }, 50);
                     }}></div>
                   </div>
+
                   <div className="form-group">
                     <label htmlFor="input-contact">Contact</label>
                     <input
@@ -923,6 +930,34 @@ function App() {
                         }
                       }, 50);
                     }}></div>
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="input-plan">N° de plan</label>
+                    <input
+                      type="text"
+                      id="input-plan"
+                      value={ticketData.numeroPlan}
+                      onChange={(e) => setTicketData({ ...ticketData, numeroPlan: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="input-date">Date Appel</label>
+                    <input
+                      type="text"
+                      id="input-date"
+                      value={ticketData.dateAppel}
+                      onChange={(e) => setTicketData({ ...ticketData, dateAppel: e.target.value })}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="input-coords">Coordonnées</label>
+                    <input
+                      type="text"
+                      id="input-coords"
+                      value={ticketData.coordonnees}
+                      onChange={(e) => setTicketData({ ...ticketData, coordonnees: e.target.value })}
+                    />
                   </div>
                 </div>
 
