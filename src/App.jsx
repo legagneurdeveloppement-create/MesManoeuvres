@@ -440,6 +440,54 @@ function App() {
     setTicketData({ ...ticketData, personnel: newPersonnel });
   };
 
+  const fillRandomPersonnel = () => {
+    const newPersonnel = [...ticketData.personnel];
+    const assignedNames = new Set();
+
+    // First pass: Track names already assigned manually
+    newPersonnel.forEach(row => {
+      if (row.nom) assignedNames.add(row.nom);
+    });
+
+    // Second pass: Fill empty rows
+    newPersonnel.forEach((row, index) => {
+      if (row.nom) return; // Keep manual assignment
+
+      const seatFonction = row.fonction ? row.fonction.trim().toUpperCase() : '';
+      const engin = row.engin ? row.engin.trim() : '';
+      const reqPermit = getVehiclePermitType(engin, customVehicles);
+
+      // Find compatible firefighters
+      const compatible = pompiers.filter(p => {
+        if (assignedNames.has(p.nom)) return false;
+        
+        const pFonctions = p.fonction ? p.fonction.split(',').map(s => s.trim().toUpperCase()) : [];
+        const matchesFonction = pFonctions.includes(seatFonction) || seatFonction === '';
+        
+        let matchesPermit = true;
+        if (seatFonction === 'COND' || seatFonction === 'CONDUCTEUR') {
+          matchesPermit = (reqPermit === 'PL' ? p.permisPL : p.permisVL);
+        }
+
+        return matchesFonction && matchesPermit;
+      });
+
+      if (compatible.length > 0) {
+        const picked = compatible[Math.floor(Math.random() * compatible.length)];
+        newPersonnel[index] = {
+          ...row,
+          nom: picked.nom,
+          matricule: picked.matricule || '',
+          grade: picked.grade || '',
+          telephone: picked.telephone || ''
+        };
+        assignedNames.add(picked.nom);
+      }
+    });
+
+    setTicketData({ ...ticketData, personnel: newPersonnel });
+  };
+
   const [voiesList, setVoiesList] = useState([
     "Rue ", "Avenue ", "Boulevard ", "Impasse ", "Allée ", "Route ", "Chemin ", "Place ", "Lieu-dit "
   ]);
@@ -972,6 +1020,13 @@ function App() {
                 <div className="section-header-flex">
                   <h3 className="section-title">ARMEMENT DU VEHICULE</h3>
                   <div style={{ display: 'flex', gap: '0.5rem' }} className="no-print">
+                    <button 
+                      className="btn-small" 
+                      style={{ background: 'var(--success-color)' }}
+                      onClick={fillRandomPersonnel}
+                    >
+                      🎲 Remplir Aléatoirement
+                    </button>
                     <select
                       className="btn-small"
                       style={{ background: 'var(--surface-color)', color: 'white', border: '1px solid var(--border-color)', outline: 'none', cursor: 'pointer' }}
