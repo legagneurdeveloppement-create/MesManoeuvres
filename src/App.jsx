@@ -231,7 +231,17 @@ function App() {
     let defaultPersonnel = [];
     const veh = motif.vehicule ? motif.vehicule.toUpperCase() : '';
 
-    if (veh.includes('VSAV')) {
+    // Check for custom vehicle first to use its configured personnel count
+    const customVeh = customVehicles.find(v => v.nom.toUpperCase() === veh.trim());
+
+    if (customVeh) {
+      const count = parseInt(customVeh.personnel) || 1;
+      defaultPersonnel = Array.from({ length: count }, (_, i) => ({
+        engin: veh, 
+        fonction: i === 0 ? 'CA' : (i === 1 ? 'COND' : (count === 3 && i === 2 ? 'EQ' : `EQ ${i - 1}`)), 
+        nom: '', matricule: '', grade: '', telephone: '' 
+      }));
+    } else if (veh.includes('VSAV')) {
       defaultPersonnel = [
         { engin: veh, fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
         { engin: veh, fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
