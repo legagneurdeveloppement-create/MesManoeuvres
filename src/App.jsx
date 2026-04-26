@@ -487,13 +487,20 @@ function App() {
       }
     }
 
-    setTicketData({
-      ...ticketData,
-      personnel: [...ticketData.personnel, ...newRows],
-      vehiculeAffiche: ticketData.vehiculeAffiche !== 'SANS VEHICULE' && ticketData.vehiculeAffiche !== ''
-        ? `${ticketData.vehiculeAffiche} + ${newRows[0]?.engin.trim()}`
-        : newRows[0]?.engin.trim()
-    });
+    if (newRows.length > 0) {
+      const separatorRow = { engin: '', fonction: '', nom: '', matricule: '', grade: '', telephone: '' };
+      const finalRows = ticketData.personnel.length > 0 
+        ? [...ticketData.personnel, separatorRow, ...newRows] 
+        : [...newRows];
+
+      setTicketData({
+        ...ticketData,
+        personnel: finalRows,
+        vehiculeAffiche: ticketData.vehiculeAffiche !== 'SANS VEHICULE' && ticketData.vehiculeAffiche !== ''
+          ? `${ticketData.vehiculeAffiche} + ${newRows[0]?.engin.trim()}`
+          : newRows[0]?.engin.trim()
+      });
+    }
   };
 
   const removePersonnelRow = (index) => {
