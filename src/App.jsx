@@ -318,6 +318,26 @@ function App() {
     });
   };
 
+  const isVehicleAllowedForGrade = (gradeNom, engin) => {
+    if (!gradeNom || !engin) return true;
+    const cleanEngin = engin.toUpperCase().trim();
+    const g = gradeNom.toLowerCase();
+    
+    if (g.includes('infirmier')) {
+      return cleanEngin.includes('INF');
+    }
+    if (g.includes('medecin')) {
+      return cleanEngin.includes('MED');
+    }
+    
+    // Prevent non-medical personnel from taking medical vehicle seats
+    if (cleanEngin.includes('INF') || cleanEngin.includes('MED')) {
+      return g.includes('infirmier') || g.includes('medecin');
+    }
+    
+    return true;
+  };
+
   const updatePersonnel = (index, field, value) => {
     const newPersonnel = [...ticketData.personnel];
     newPersonnel[index][field] = value;
@@ -509,12 +529,15 @@ function App() {
         // Check if grade allows this function
         const matchesGrade = isFonctionAllowed(p.grade, seatFonction);
 
+        // Check vehicle-grade compatibility (Medical personnel)
+        const matchesVehicle = isVehicleAllowedForGrade(p.grade, engin);
+
         let matchesPermit = true;
         if (seatFonction === 'COND' || seatFonction === 'CONDUCTEUR') {
           matchesPermit = (reqPermit === 'PL' ? p.permisPL : p.permisVL);
         }
 
-        return matchesFonction && matchesGrade && matchesPermit;
+        return matchesFonction && matchesGrade && matchesVehicle && matchesPermit;
       });
 
       if (compatible.length > 0) {
@@ -1132,12 +1155,15 @@ function App() {
                                 ? (getVehiclePermitType(p.engin, customVehicles) === 'PL' ? 'pompiers-list-pl' : 'pompiers-list-vl')
                                 : 'pompiers-list'
                               }
-                              className={(p.fonction === 'COND' || p.fonction === 'CONDUCTEUR') && checkPermitError(p.nom, p.engin) ? 'permit-error' : ''}
+                              className={((p.fonction === 'COND' || p.fonction === 'CONDUCTEUR') && checkPermitError(p.nom, p.engin)) || !isVehicleAllowedForGrade(p.grade, p.engin) ? 'permit-error' : ''}
                               value={p.nom} 
                               onChange={(e) => updatePersonnel(index, 'nom', e.target.value)} 
                             />
                             {(p.fonction === 'COND' || p.fonction === 'CONDUCTEUR') && checkPermitError(p.nom, p.engin) && (
                               <div style={{ fontSize: '0.6rem', color: '#ef4444', fontWeight: 'bold' }}>PERMIS NON VALIDE</div>
+                            )}
+                            {!isVehicleAllowedForGrade(p.grade, p.engin) && (
+                              <div style={{ fontSize: '0.6rem', color: '#ef4444', fontWeight: 'bold' }}>GRADE NON COMPATIBLE AVEC CE VÉHICULE</div>
                             )}
                           </td>
                           <td><input type="text" value={p.matricule} onChange={(e) => updatePersonnel(index, 'matricule', e.target.value)} /></td>
