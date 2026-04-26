@@ -369,11 +369,12 @@ function App() {
   };
 
   const addPersonnelRow = () => {
+    const lastEngin = ticketData.personnel.length > 0 ? ticketData.personnel[ticketData.personnel.length - 1].engin : '';
     setTicketData({
       ...ticketData,
       personnel: [
         ...ticketData.personnel,
-        { engin: selectedMotif.vehicule || '', fonction: '', nom: '', matricule: '', grade: '', telephone: '' }
+        { engin: lastEngin, fonction: '', nom: '', matricule: '', grade: '', telephone: '' }
       ]
     });
   };
@@ -439,8 +440,11 @@ function App() {
       // Check for custom vehicles
       const customVeh = customVehicles.find(v => v.nom === typeVehicule);
       if (customVeh) {
-        newRows = Array.from({ length: parseInt(customVeh.personnel) || 1 }, () => ({
-          engin: customVeh.nom + ' ', fonction: '', nom: '', matricule: '', grade: '', telephone: ''
+        const count = parseInt(customVeh.personnel) || 1;
+        newRows = Array.from({ length: count }, (_, i) => ({
+          engin: customVeh.nom + ' ', 
+          fonction: i === 0 ? 'CA' : (i === 1 ? 'COND' : (count === 3 && i === 2 ? 'EQ' : `EQ ${i - 1}`)), 
+          nom: '', matricule: '', grade: '', telephone: ''
         }));
       }
     }
