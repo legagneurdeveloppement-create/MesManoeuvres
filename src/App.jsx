@@ -227,42 +227,9 @@ function App() {
     setSelectedMotif(motif);
     setIsValidated(false);
 
-    // Determine default personnel rows based on vehicule type
+    // No default personnel rows anymore as requested
     let defaultPersonnel = [];
-    const veh = motif.vehicule ? motif.vehicule.toUpperCase() : '';
-
-    // Check for custom vehicle first to use its configured personnel count
-    const customVeh = customVehicles.find(v => v.nom.toUpperCase() === veh.trim());
-
-    if (customVeh) {
-      const count = parseInt(customVeh.personnel) || 1;
-      defaultPersonnel = Array.from({ length: count }, (_, i) => ({
-        engin: veh, 
-        fonction: i === 0 ? 'CA' : (i === 1 ? 'COND' : (count === 3 && i === 2 ? 'EQ' : `EQ ${i - 1}`)), 
-        nom: '', matricule: '', grade: '', telephone: '' 
-      }));
-    } else if (veh.includes('VSAV')) {
-      defaultPersonnel = [
-        { engin: veh, fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'EQ 1', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'EQ 2', nom: '', matricule: '', grade: '', telephone: '' },
-      ];
-    } else if (veh.includes('FPT') || veh.includes('CCR')) {
-      defaultPersonnel = [
-        { engin: veh, fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'CE BAT', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'EQ BAT', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'CE BAL', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'EQ BAL', nom: '', matricule: '', grade: '', telephone: '' },
-      ];
-    } else if (veh !== "") {
-      defaultPersonnel = [
-        { engin: veh, fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: veh, fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' }
-      ];
-    }
+    const veh = ''; 
 
     // Generate a random 6 digit number for the departure
     const randomNum = Math.floor(100000 + Math.random() * 900000);
@@ -270,7 +237,7 @@ function App() {
     setTicketData({
       numeroDepart: `${randomNum}-01-${caserne}`,
       operateurCta: cta,
-      vehiculeAffiche: motif.vehicule || 'SANS VEHICULE',
+      vehiculeAffiche: 'SANS VEHICULE',
       commune: motif.commune || '',
       voie: '',
       numeroPlan: '',
