@@ -321,18 +321,18 @@ function App() {
   const isVehicleAllowedForGrade = (gradeNom, engin) => {
     if (!gradeNom || !engin) return true;
     const cleanEngin = engin.toUpperCase().trim();
-    const g = gradeNom.toLowerCase();
+    const ng = normalizeFunction(gradeNom);
     
-    if (g.includes('infirmier')) {
+    if (ng.includes('INFIRMIER')) {
       return cleanEngin.includes('INF');
     }
-    if (g.includes('medecin')) {
+    if (ng.includes('MEDECIN')) {
       return cleanEngin.includes('MED');
     }
     
     // Prevent non-medical personnel from taking medical vehicle seats
     if (cleanEngin.includes('INF') || cleanEngin.includes('MED')) {
-      return g.includes('infirmier') || g.includes('medecin');
+      return ng.includes('INFIRMIER') || ng.includes('MEDECIN');
     }
     
     return true;
