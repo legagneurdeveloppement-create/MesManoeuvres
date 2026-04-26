@@ -86,7 +86,7 @@ function App() {
   // Settings state for functions and grades
   const [availableFonctions, setAvailableFonctions] = useState(() => {
     const saved = localStorage.getItem('availableFonctions');
-    return saved ? JSON.parse(saved) : ["CA", "COND", "CE BAT", "EQ BAT", "CE BAL", "EQ BAL", "CE", "BAT", "BAL", "EQ 1", "EQ 2", "EQ BAT 1", "EQ BAT 2", "EQ BAL 1", "EQ BAL 2", "COS", "CC", "CHEF D'AGRÈS", "CONDUCTEUR", "ÉQUIPIER", "INF", "MED"];
+    return saved ? JSON.parse(saved) : ["CA", "CC", "CE BAT", "EQ BAT", "CE BAL", "EQ BAL", "COND", "COS", "EQ 1", "EQ 2", "EQ 3", "EQ 4", "INF", "MED"];
   });
 
   const [availableGrades, setAvailableGrades] = useState(() => {
@@ -115,13 +115,16 @@ function App() {
     localStorage.setItem('availableFonctions', JSON.stringify(availableFonctions));
   }, [availableFonctions]);
 
-  // Migration: ensure CE BAT and EQ BAT are available if they were missing, and cleanup duplicates
+  // Migration: ensure CE BAT and EQ BAT are available, and cleanup redundant synonyms
   useEffect(() => {
+    const synonymsToRemove = ["CHEF D'AGRÈS", "CONDUCTEUR", "ÉQUIPIER", "BAT", "BAL", "CE"];
     const missing = ["CE BAT", "EQ BAT", "CE BAL", "EQ BAL"].filter(f => !availableFonctions.includes(f));
-    const unique = [...new Set(availableFonctions)].filter(f => f.trim() !== "");
     
-    if (missing.length > 0 || unique.length !== availableFonctions.length) {
-      setAvailableFonctions([...new Set([...missing, ...unique])].sort());
+    const currentClean = availableFonctions.filter(f => !synonymsToRemove.includes(f.toUpperCase()));
+    const unique = [...new Set([...missing, ...currentClean])].filter(f => f.trim() !== "");
+    
+    if (unique.length !== availableFonctions.length) {
+      setAvailableFonctions(unique.sort());
     }
   }, []);
 
