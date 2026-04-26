@@ -86,7 +86,7 @@ function App() {
   // Settings state for functions and grades
   const [availableFonctions, setAvailableFonctions] = useState(() => {
     const saved = localStorage.getItem('availableFonctions');
-    return saved ? JSON.parse(saved) : ["CA", "COND", "CE BAT", "EQ BAT", "CE BAL", "EQ BAL", "CE", "BAT", "BAL", "EQ 1", "EQ 2", "EQ BAT 1", "EQ BAT 2", "EQ BAL 1", "EQ BAL 2", "COS", "CC", "CHEF D'AGRÈS", "CONDUCTEUR", "ÉQUIPIER"];
+    return saved ? JSON.parse(saved) : ["CA", "COND", "CE BAT", "EQ BAT", "CE BAL", "EQ BAL", "CE", "BAT", "BAL", "EQ 1", "EQ 2", "EQ BAT 1", "EQ BAT 2", "EQ BAL 1", "EQ BAL 2", "COS", "CC", "CHEF D'AGRÈS", "CONDUCTEUR", "ÉQUIPIER", "INF", "MED"];
   });
 
   const [availableGrades, setAvailableGrades] = useState(() => {
@@ -309,9 +309,16 @@ function App() {
 
   const isFonctionAllowed = (gradeNom, fonctionNom) => {
     if (!gradeNom || !fonctionNom) return true;
+    const nf = normalizeFunction(fonctionNom);
+    const ng = normalizeFunction(gradeNom);
+    
+    // Hardcoded medical rules
+    if (nf === 'INF' && ng.includes('INFIRMIER')) return true;
+    if (nf === 'MED' && ng.includes('MEDECIN')) return true;
+
     const grade = availableGrades.find(g => g.nom === gradeNom);
     if (!grade || !grade.fonctions || grade.fonctions.length === 0) return true;
-    const nf = normalizeFunction(fonctionNom);
+    
     return grade.fonctions.some(f => {
       const gnf = normalizeFunction(f);
       return gnf === nf || (nf.startsWith('EQ') && gnf.startsWith('EQ')) || (nf.startsWith('EQ') && gnf === 'EQUIPIER') || (nf === 'EQUIPIER' && gnf.startsWith('EQ'));
@@ -461,11 +468,19 @@ function App() {
       const customVeh = customVehicles.find(v => v.nom === typeVehicule);
       if (customVeh) {
         const count = parseInt(customVeh.personnel) || 1;
-        newRows = Array.from({ length: count }, (_, i) => ({
-          engin: customVeh.nom + ' ', 
-          fonction: i === 0 ? 'CA' : (i === 1 ? 'COND' : (count === 3 && i === 2 ? 'EQ' : `EQ ${i - 1}`)), 
-          nom: '', matricule: '', grade: '', telephone: ''
-        }));
+        newRows = Array.from({ length: count }, (_, i) => {
+          let defaultFonction = i === 0 ? 'CA' : (i === 1 ? 'COND' : (count === 3 && i === 2 ? 'EQ' : `EQ ${i - 1}`));
+          
+          // Special case for medical vehicles
+          if (customVeh.nom.toUpperCase().includes('INF')) defaultFonction = 'INF';
+          if (customVeh.nom.toUpperCase().includes('MED')) defaultFonction = 'MED';
+
+          return {
+            engin: customVeh.nom + ' ', 
+            fonction: defaultFonction, 
+            nom: '', matricule: '', grade: '', telephone: ''
+          };
+        });
       }
     }
 
