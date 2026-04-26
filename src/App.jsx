@@ -257,7 +257,7 @@ function App() {
         { engin: veh, fonction: 'CE BAL', nom: '', matricule: '', grade: '', telephone: '' },
         { engin: veh, fonction: 'EQ BAL', nom: '', matricule: '', grade: '', telephone: '' },
       ];
-    } else {
+    } else if (veh !== "") {
       defaultPersonnel = [
         { engin: veh, fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
         { engin: veh, fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' }
@@ -379,7 +379,18 @@ function App() {
       }
     }
 
-    setTicketData({ ...ticketData, personnel: newPersonnel });
+    // Update header if engin changed
+    let newVehiculeAffiche = ticketData.vehiculeAffiche;
+    if (field === 'engin') {
+      const uniqueEngins = [...new Set(newPersonnel.map(p => p.engin.trim()).filter(e => e !== ""))];
+      newVehiculeAffiche = uniqueEngins.length > 0 ? uniqueEngins.join(' + ') : 'SANS VEHICULE';
+    }
+
+    setTicketData({ 
+      ...ticketData, 
+      personnel: newPersonnel,
+      vehiculeAffiche: newVehiculeAffiche
+    });
   };
 
   const checkPermitError = (pompierName, engin) => {
@@ -478,7 +489,16 @@ function App() {
 
   const removePersonnelRow = (index) => {
     const newPersonnel = ticketData.personnel.filter((_, i) => i !== index);
-    setTicketData({ ...ticketData, personnel: newPersonnel });
+    
+    // Recalculate vehiculeAffiche from remaining rows
+    const uniqueEngins = [...new Set(newPersonnel.map(p => p.engin.trim()).filter(e => e !== ""))];
+    const newVehiculeAffiche = uniqueEngins.length > 0 ? uniqueEngins.join(' + ') : 'SANS VEHICULE';
+
+    setTicketData({ 
+      ...ticketData, 
+      personnel: newPersonnel,
+      vehiculeAffiche: newVehiculeAffiche
+    });
   };
 
   const fillRandomPersonnel = () => {
@@ -917,7 +937,6 @@ function App() {
                 >
                   <div className="card-header">
                     {item.code ? <span className="code-badge">{item.code}</span> : <span></span>}
-                    {item.vehicule && <span className="vehicule-badge">{item.vehicule}</span>}
                   </div>
                   <h2 className="card-title">{item.motif || 'Motif non précisé'}</h2>
                 </div>
