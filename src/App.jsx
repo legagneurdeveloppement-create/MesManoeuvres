@@ -537,7 +537,11 @@ function App() {
           return nfP.startsWith('EQ') || nfP === 'EQUIPIER';
         });
         
-        const matchesFonction = pFonctions.some(f => normalizeFunction(f) === nfSeat) || 
+        const ng = normalizeFunction(p.grade);
+        const medicalMatch = (nfSeat === 'INF' && ng.includes('INFIRMIER')) || (nfSeat === 'MED' && ng.includes('MEDECIN'));
+
+        const matchesFonction = medicalMatch || 
+                               pFonctions.some(f => normalizeFunction(f) === nfSeat) || 
                                nfSeat === '' || 
                                (isEqSeat && pHasEq);
         
