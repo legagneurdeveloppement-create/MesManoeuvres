@@ -20,7 +20,6 @@ const getVehiclePermitType = (engin, customVehicles = []) => {
 function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMotif, setSelectedMotif] = useState(null);
-  const [isValidated, setIsValidated] = useState(false);
 
   // States for dynamic communes and settings
   const [departement, setDepartement] = useState('21'); // Default to Côte-d'Or
@@ -54,6 +53,7 @@ function App() {
     })).sort((a, b) => (a.nom || "").localeCompare(b.nom || ""));
   });
   const [showSettings, setShowSettings] = useState(false);
+  const [showManual, setShowManual] = useState(false);
 
   // Settings state for vehicles
   const [customVehicles, setCustomVehicles] = useState(() => {
@@ -228,7 +228,6 @@ function App() {
 
   const handleCardClick = (motif) => {
     setSelectedMotif(motif);
-    setIsValidated(false);
 
     // No default personnel rows anymore as requested
     let defaultPersonnel = [];
@@ -267,14 +266,6 @@ function App() {
 
   const handleCloseModal = () => {
     setSelectedMotif(null);
-    setTimeout(() => setIsValidated(false), 300);
-  };
-
-  const handleValidate = () => {
-    setIsValidated(true);
-    setTimeout(() => {
-      handleCloseModal();
-    }, 2000);
   };
 
   const handlePrint = () => {
@@ -367,7 +358,6 @@ function App() {
       if (pData) {
         newPersonnel[index].matricule = pData.matricule || '';
         newPersonnel[index].grade = pData.grade || '';
-        newPersonnel[index].telephone = pData.telephone || '';
         
         // Only fill function if the seat doesn't already have one assigned
         if (!newPersonnel[index].fonction) {
@@ -404,7 +394,7 @@ function App() {
       ...ticketData,
       personnel: [
         ...ticketData.personnel,
-        { engin: lastEngin, fonction: '', nom: '', matricule: '', grade: '', telephone: '' }
+        { engin: lastEngin, fonction: '', nom: '', matricule: '', grade: '' }
       ]
     });
   };
@@ -413,58 +403,58 @@ function App() {
     let newRows = [];
     if (typeVehicule === 'VSAV') {
       newRows = [
-        { engin: 'VSAV ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'VSAV ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'VSAV ', fonction: 'EQ 1', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'VSAV ', fonction: 'EQ 2', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'VSAV ', fonction: 'CA', nom: '', matricule: '', grade: '' },
+        { engin: 'VSAV ', fonction: 'COND', nom: '', matricule: '', grade: '' },
+        { engin: 'VSAV ', fonction: 'EQ 1', nom: '', matricule: '', grade: '' },
+        { engin: 'VSAV ', fonction: 'EQ 2', nom: '', matricule: '', grade: '' },
       ];
     } else if (typeVehicule === 'VSAV3') {
       newRows = [
-        { engin: 'VSAV ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'VSAV ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'VSAV ', fonction: 'EQ', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'VSAV ', fonction: 'CA', nom: '', matricule: '', grade: '' },
+        { engin: 'VSAV ', fonction: 'COND', nom: '', matricule: '', grade: '' },
+        { engin: 'VSAV ', fonction: 'EQ', nom: '', matricule: '', grade: '' },
       ];
     } else if (typeVehicule === 'FPT') {
       newRows = [
-        { engin: 'FPT ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'FPT ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'FPT ', fonction: 'CE BAT', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'FPT ', fonction: 'EQ BAT', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'FPT ', fonction: 'CE BAL', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'FPT ', fonction: 'EQ BAL', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'FPT ', fonction: 'CA', nom: '', matricule: '', grade: '' },
+        { engin: 'FPT ', fonction: 'COND', nom: '', matricule: '', grade: '' },
+        { engin: 'FPT ', fonction: 'CE BAT', nom: '', matricule: '', grade: '' },
+        { engin: 'FPT ', fonction: 'EQ BAT', nom: '', matricule: '', grade: '' },
+        { engin: 'FPT ', fonction: 'CE BAL', nom: '', matricule: '', grade: '' },
+        { engin: 'FPT ', fonction: 'EQ BAL', nom: '', matricule: '', grade: '' },
       ];
     } else if (typeVehicule === 'SR') {
       newRows = [
-        { engin: 'VSR ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'VSR ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'VSR ', fonction: 'EQ', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'VSR ', fonction: 'CA', nom: '', matricule: '', grade: '' },
+        { engin: 'VSR ', fonction: 'COND', nom: '', matricule: '', grade: '' },
+        { engin: 'VSR ', fonction: 'EQ', nom: '', matricule: '', grade: '' },
       ];
     } else if (typeVehicule === 'VTU') {
       newRows = [
-        { engin: 'VTU ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'VTU ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'VTU ', fonction: 'CA', nom: '', matricule: '', grade: '' },
+        { engin: 'VTU ', fonction: 'COND', nom: '', matricule: '', grade: '' },
       ];
     } else if (typeVehicule === 'VLCG') {
       newRows = [
-        { engin: 'VLCG ', fonction: 'COS', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'VLCG ', fonction: 'COS', nom: '', matricule: '', grade: '' },
       ];
     } else if (typeVehicule === 'CCF') {
       newRows = [
-        { engin: 'CCF ', fonction: 'CC', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'CCF ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'CCF ', fonction: 'EQ 1', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'CCF ', fonction: 'EQ 2', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'CCF ', fonction: 'CC', nom: '', matricule: '', grade: '' },
+        { engin: 'CCF ', fonction: 'COND', nom: '', matricule: '', grade: '' },
+        { engin: 'CCF ', fonction: 'EQ 1', nom: '', matricule: '', grade: '' },
+        { engin: 'CCF ', fonction: 'EQ 2', nom: '', matricule: '', grade: '' },
       ];
     } else if (typeVehicule === 'EPA') {
       newRows = [
-        { engin: 'EPA ', fonction: 'CA', nom: '', matricule: '', grade: '', telephone: '' },
-        { engin: 'EPA ', fonction: 'COND', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: 'EPA ', fonction: 'CA', nom: '', matricule: '', grade: '' },
+        { engin: 'EPA ', fonction: 'COND', nom: '', matricule: '', grade: '' },
       ];
     } else if (typeVehicule === 'AUTRE') {
       const nomEngin = prompt("Nom de l'engin :");
       if (!nomEngin) return;
       newRows = [
-        { engin: nomEngin.toUpperCase() + ' ', fonction: '', nom: '', matricule: '', grade: '', telephone: '' },
+        { engin: nomEngin.toUpperCase() + ' ', fonction: '', nom: '', matricule: '', grade: '' },
       ];
     } else {
       // Check for custom vehicles
@@ -481,14 +471,14 @@ function App() {
           return {
             engin: customVeh.nom + ' ', 
             fonction: defaultFonction, 
-            nom: '', matricule: '', grade: '', telephone: ''
+            nom: '', matricule: '', grade: ''
           };
         });
       }
     }
 
     if (newRows.length > 0) {
-      const separatorRow = { engin: '', fonction: '', nom: '', matricule: '', grade: '', telephone: '' };
+      const separatorRow = { engin: '', fonction: '', nom: '', matricule: '', grade: '' };
       const finalRows = ticketData.personnel.length > 0 
         ? [...ticketData.personnel, separatorRow, ...newRows] 
         : [...newRows];
@@ -523,7 +513,7 @@ function App() {
 
     // Clear existing names to allow re-randomization on each click
     newPersonnel.forEach((row, index) => {
-      newPersonnel[index] = { ...row, nom: '', matricule: '', grade: '', telephone: '' };
+      newPersonnel[index] = { ...row, nom: '', matricule: '', grade: '' };
     });
 
     // Fill rows
@@ -575,8 +565,7 @@ function App() {
           ...row,
           nom: picked.nom,
           matricule: picked.matricule || '',
-          grade: picked.grade || '',
-          telephone: picked.telephone || ''
+          grade: picked.grade || ''
         };
         assignedNames.add(picked.nom);
       }
@@ -654,8 +643,11 @@ function App() {
       </datalist>
 
       <header className="header no-print">
-        <div className="settings-btn-container">
-          <button className="btn-settings" onClick={() => setShowSettings(!showSettings)}>
+        <div className="settings-btn-container" style={{ display: 'flex', gap: '0.5rem' }}>
+          <button className="btn-settings" onClick={() => { setShowManual(!showManual); setShowSettings(false); }}>
+            {showManual ? '🏠 Accueil' : '📖 Mode d\'emploi'}
+          </button>
+          <button className="btn-settings" onClick={() => { setShowSettings(!showSettings); setShowManual(false); }}>
             {showSettings ? '🏠 Accueil' : '⚙️ Paramètres Personnel'}
           </button>
         </div>
@@ -697,7 +689,51 @@ function App() {
         <p>Générateur d'Ordre de Départ (OD)</p>
       </header>
 
-      {showSettings ? (
+      {showManual ? (
+        <div className="settings-container no-print" style={{ textAlign: 'left', lineHeight: '1.6', maxWidth: '800px', margin: '0 auto' }}>
+          <h1 style={{ marginBottom: '1.5rem', textAlign: 'center' }}>Mode d'Emploi - "Mes Manœuvres"</h1>
+          <p>Bienvenue dans le manuel d'utilisation de l'application <strong>Mes Manœuvres</strong>, votre générateur d'Ordres de Départ (OD) informatisé.</p>
+          
+          <h2 className="section-title">1. Démarrage de l'application</h2>
+          <p>L'application est conçue pour fonctionner sans installation complexe et sans nécessiter de connexion internet.</p>
+          <ul style={{ paddingLeft: '1.5rem', marginBottom: '1rem' }}>
+            <li><strong>Si vous utilisez une clé USB ou un CD :</strong> Ouvrez le dossier de votre clé/CD et double-cliquez simplement sur le fichier <code>index.html</code>. L'application s'ouvrira dans votre navigateur web habituel.</li>
+            <li><em>Rappel important :</em> Les paramètres et la liste du personnel que vous renseignez sont sauvegardés <strong>dans la mémoire du navigateur de l'ordinateur</strong> sur lequel vous vous trouvez, et non sur la clé USB elle-même.</li>
+          </ul>
+
+          <h2 className="section-title">2. Configuration Initiale</h2>
+          <p>Avant de générer votre premier ticket, il est recommandé de configurer votre centre et votre personnel.</p>
+          <ul style={{ paddingLeft: '1.5rem', marginBottom: '1rem' }}>
+            <li><strong>En-tête :</strong> Configurez votre Département, Centre (Caserne) et CTA.</li>
+            <li><strong>Paramètres Personnel :</strong> Cliquez sur "⚙️ Paramètres Personnel" en haut à droite.</li>
+            <li><strong>Ajouter un pompier :</strong> Renseignez Nom, Matricule et Grade. Cliquez sur les étiquettes pour attribuer des compétences (CA, COND...) et sur VL/PL pour les permis.</li>
+            <li><strong>Sauvegarde :</strong> Tout est sauvegardé automatiquement à chaque modification.</li>
+          </ul>
+
+          <h2 className="section-title">3. Générer un Ordre de Départ</h2>
+          <ul style={{ paddingLeft: '1.5rem', marginBottom: '1rem' }}>
+            <li><strong>Choisir le motif :</strong> Utilisez la barre de recherche et cliquez sur la carte correspondante.</li>
+            <li><strong>Renseigner les détails :</strong> Remplissez la Commune, Voie, Contact, et Observations.</li>
+            <li><strong>Ajouter un engin :</strong> Cliquez sur les boutons de véhicules en bas (VSAV, FPT...). L'application créera les lignes de personnel requises.</li>
+            <li><strong>Affectation Manuelle :</strong> Cliquez dans la case "Nom" d'une ligne. Si vous tapez le nom d'un pompier, son matricule, grade et fonction se rempliront automatiquement.</li>
+            <li><strong>Remplissage Aléatoire :</strong> Cliquez sur le bouton "🎲 Remplir Aléatoirement". L'application analysera vos véhicules et vos "Paramètres Personnel" pour affecter les pompiers disponibles et <em>compétents</em> pour chaque poste (en vérifiant les permis et fonctions).</li>
+          </ul>
+
+          <h2 className="section-title">4. Impression et Fermeture</h2>
+          <ul style={{ paddingLeft: '1.5rem', marginBottom: '1rem' }}>
+            <li>Une fois le ticket rempli, cliquez sur <strong>"🖨️ Imprimer"</strong>.</li>
+            <li>L'application passera automatiquement dans un format épuré, parfait pour sortir sur l'imprimante de la caserne.</li>
+            <li>Pour quitter le ticket, cliquez simplement sur <strong>"Fermer"</strong>.</li>
+          </ul>
+
+          <h2 className="section-title">5. Astuces et Règles de l'application</h2>
+          <ul style={{ paddingLeft: '1.5rem', marginBottom: '1rem' }}>
+            <li><strong>Sécurité des affectations :</strong> L'application vous empêchera d'affecter accidentellement le même pompier à deux postes différents sur le même départ.</li>
+            <li><strong>Règles Médicales :</strong> Seul un Infirmier ou une Infirmière peut monter dans un véhicule "INF" ou prendre un poste "INF". Idem pour les Médecins.</li>
+            <li><strong>Compatibilité :</strong> Lors du remplissage aléatoire, si aucune personne n'a les compétences requises pour un poste (ex: aucun conducteur PL disponible), la case restera vide pour vous alerter.</li>
+          </ul>
+        </div>
+      ) : showSettings ? (
         <div className="settings-container no-print">
           <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', marginBottom: '2rem' }}>Gestion du Personnel</h2>
           <div className="table-responsive">
@@ -710,7 +746,6 @@ function App() {
                   <th>GRADE</th>
                   <th>VL</th>
                   <th>PL</th>
-                  <th>TELEPHONE</th>
                   <th></th>
                 </tr>
               </thead>
@@ -776,11 +811,6 @@ function App() {
                         PL
                       </div>
                     </td>
-                    <td><input type="text" value={p.telephone} onChange={(e) => {
-                      const newP = [...pompiers];
-                      newP[index].telephone = e.target.value;
-                      setPompiers(newP);
-                    }} /></td>
                     <td>
                       <button className="btn-delete" onClick={() => {
                         if (confirm(`Supprimer ${p.nom || 'ce pompier'} ?`)) {
@@ -795,7 +825,7 @@ function App() {
           </div>
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
             <button className="btn btn-print" onClick={() => {
-              setPompiers([...pompiers, { nom: '', matricule: '', fonction: '', grade: '', telephone: '', permisVL: false, permisPL: false }]);
+              setPompiers([...pompiers, { nom: '', matricule: '', fonction: '', grade: '', permisVL: false, permisPL: false }]);
             }}>+ Ajouter un Pompier</button>
           </div>
 
@@ -977,9 +1007,8 @@ function App() {
       {selectedMotif && (
         <div className="modal-overlay">
           <div className="modal-content printable-ticket" onClick={(e) => e.stopPropagation()}>
-            {!isValidated ? (
-              <>
-                {/* Header of the Printable Ticket */}
+            <>
+              {/* Header of the Printable Ticket */}
                 <div className="ticket-print-header">
                   <div className="ticket-print-left">
                     <div className="ticket-print-box">DEPART STANDARD</div>
@@ -1225,18 +1254,8 @@ function App() {
                   <button className="btn btn-print" onClick={handlePrint}>
                     🖨️ Imprimer
                   </button>
-                  <button className="btn btn-confirm" onClick={handleValidate}>
-                    ✓ Valider le départ
-                  </button>
                 </div>
-              </>
-            ) : (
-              <div className="success-message no-print">
-                <span className="success-icon">✅</span>
-                <h2>Ordre Envoyé !</h2>
-                <p>Les véhicules sont en route pour le motif {selectedMotif.code}.</p>
-              </div>
-            )}
+            </>
           </div>
         </div>
       )}
