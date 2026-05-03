@@ -640,6 +640,9 @@ function App() {
       <datalist id="grades-list">
         {availableGrades.slice().sort((a, b) => a.nom.localeCompare(b.nom)).map((g, i) => <option key={i} value={typeof g === 'string' ? g : g.nom} />)}
       </datalist>
+      <datalist id="vehicules-list">
+        {customVehicles.map((v, i) => <option key={i} value={v.nom} />)}
+      </datalist>
 
       <header className="header no-print">
         <div className="settings-btn-container" style={{ display: 'flex', gap: '0.5rem' }}>
@@ -1206,7 +1209,7 @@ function App() {
                     <tbody>
                       {ticketData.personnel.map((p, index) => (
                         <tr key={index}>
-                          <td><input type="text" value={p.engin} onChange={(e) => updatePersonnel(index, 'engin', e.target.value)} /></td>
+                          <td><input type="text" list="vehicules-list" value={p.engin} onChange={(e) => updatePersonnel(index, 'engin', e.target.value)} /></td>
                           <td>
                             <input 
                               type="text" 
