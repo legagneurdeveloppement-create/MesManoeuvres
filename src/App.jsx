@@ -307,10 +307,10 @@ function App() {
     const ng = normalizeFunction(gradeNom);
     
     // Hardcoded medical rules
-    if (nf === 'INF' && ng.includes('INFIRMIER')) return true;
-    if (nf === 'MED' && ng.includes('MEDECIN')) return true;
+    if ((nf === 'INF' || nf.includes('MEDIC') || nf.includes('SANTE')) && ng.includes('INFIRMIER')) return true;
+    if ((nf === 'MED' || nf.includes('MEDIC') || nf.includes('SANTE')) && ng.includes('MEDECIN')) return true;
 
-    const grade = availableGrades.find(g => g.nom === gradeNom);
+    const grade = availableGrades.find(g => normalizeFunction(g.nom) === ng);
     if (!grade || !grade.fonctions || grade.fonctions.length === 0) return true;
     
     return grade.fonctions.some(f => {
@@ -324,15 +324,13 @@ function App() {
     const cleanEngin = engin.toUpperCase().trim();
     const ng = normalizeFunction(gradeNom);
     
-    if (ng.includes('INFIRMIER')) {
-      return cleanEngin.includes('INF');
-    }
-    if (ng.includes('MEDECIN')) {
-      return cleanEngin.includes('MED');
+    // Le personnel médical peut armer des véhicules médicaux mais aussi d'autres véhicules légers (VL, VSAV, etc.)
+    if (ng.includes('INFIRMIER') || ng.includes('MEDECIN')) {
+      return cleanEngin.includes('INF') || cleanEngin.includes('MED') || cleanEngin.includes('VLM') || cleanEngin.includes('VL') || cleanEngin.includes('VSAV');
     }
     
     // Prevent non-medical personnel from taking medical vehicle seats
-    if (cleanEngin.includes('INF') || cleanEngin.includes('MED')) {
+    if (cleanEngin.includes('INF') || cleanEngin.includes('MED') || cleanEngin.includes('VLM')) {
       return ng.includes('INFIRMIER') || ng.includes('MEDECIN');
     }
     
@@ -537,7 +535,8 @@ function App() {
         });
         
         const ng = normalizeFunction(p.grade);
-        const medicalMatch = (nfSeat === 'INF' && ng.includes('INFIRMIER')) || (nfSeat === 'MED' && ng.includes('MEDECIN'));
+        const medicalMatch = ((nfSeat === 'INF' || nfSeat.includes('MEDIC') || nfSeat.includes('SANTE')) && ng.includes('INFIRMIER')) || 
+                             ((nfSeat === 'MED' || nfSeat.includes('MEDIC') || nfSeat.includes('SANTE')) && ng.includes('MEDECIN'));
 
         const matchesFonction = medicalMatch || 
                                pFonctions.some(f => normalizeFunction(f) === nfSeat) || 
