@@ -705,8 +705,10 @@ function App() {
           <p>Avant de générer votre premier ticket, il est recommandé de configurer votre centre et votre personnel.</p>
           <ul style={{ paddingLeft: '1.5rem', marginBottom: '1rem' }}>
             <li><strong>En-tête :</strong> Configurez votre Département, Centre (Caserne) et CTA.</li>
-            <li><strong>Paramètres Personnel :</strong> Cliquez sur "⚙️ Paramètres Personnel" en haut à droite.</li>
-            <li><strong>Ajouter un pompier :</strong> Renseignez Nom, Matricule et Grade. Cliquez sur les étiquettes pour attribuer des compétences (CA, COND...) et sur VL/PL pour les permis.</li>
+            <li><strong>Paramètres :</strong> Cliquez sur "⚙️ Paramètres Personnel" en haut à droite.</li>
+            <li><strong>Le Personnel :</strong> Renseignez Nom, Matricule et Grade. Cliquez sur les étiquettes pour attribuer des compétences (CA, COND...) et sur VL/PL pour les permis.</li>
+            <li><strong>Les Véhicules (plus bas) :</strong> Modifiez ou ajoutez vos propres véhicules avec le bon nombre de places et le permis requis.</li>
+            <li><strong>Les Fonctions et Grades (tout en bas) :</strong> Gérez les listes déroulantes de l'application. Très important : <strong>définissez les fonctions autorisées pour chaque grade</strong> afin que le remplissage aléatoire soit intelligent !</li>
             <li><strong>Sauvegarde :</strong> Tout est sauvegardé automatiquement à chaque modification.</li>
           </ul>
 
