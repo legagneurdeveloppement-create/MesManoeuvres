@@ -389,12 +389,11 @@ function App() {
   };
 
   const addPersonnelRow = () => {
-    const lastEngin = ticketData.personnel.length > 0 ? ticketData.personnel[ticketData.personnel.length - 1].engin : '';
     setTicketData({
       ...ticketData,
       personnel: [
         ...ticketData.personnel,
-        { engin: lastEngin, fonction: '', nom: '', matricule: '', grade: '' }
+        { engin: '', fonction: '', nom: '', matricule: '', grade: '' }
       ]
     });
   };
