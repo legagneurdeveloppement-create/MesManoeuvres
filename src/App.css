@@ -629,3 +629,40 @@ input::-webkit-calendar-picker-indicator {
     background-color: transparent !important;
   }
 }
+
+.ticket-select {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 1rem;
+  color: inherit;
+  cursor: pointer;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 0.25rem;
+}
+
+.ticket-select:focus {
+  background-color: #f8fafc;
+}
+
+@media print {
+  .ticket-select {
+    border: none;
+    background: transparent;
+  }
+  .print-only {
+    display: block !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
+
+.print-only {
+  display: none;
+}
+

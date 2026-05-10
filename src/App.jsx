@@ -1,6 +1,67 @@
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect, useRef, Component } from 'react';
 import './App.css';
 import motifsData from './data.json';
+
+// Error Boundary Component to prevent white pages
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error("Crash de l'application:", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '2rem', textAlign: 'center', color: 'white', background: '#1a1a1a', height: '100vh' }}>
+          <h1>⚠️ Oups ! Une erreur est survenue.</h1>
+          <p>L'application a rencontré un problème inattendu.</p>
+          <pre style={{ background: '#333', padding: '1rem', borderRadius: '8px', overflow: 'auto', maxWidth: '100%' }}>
+            {this.state.error && this.state.error.toString()}
+          </pre>
+          <button onClick={() => window.location.reload()} style={{ padding: '0.5rem 1rem', cursor: 'pointer' }}>
+            🔄 Redémarrer l'application
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// Fallback communes for Dpt 21 (offline mode)
+const communes21_fallback = [
+  "AIGNAY-LE-DUC", "AISEREY", "ALISE-SAINTE-REINE", "ALLEREI", "AMPUILLY-LES-BORDES", "ANRECEY", "ARCEAU", "ARC-SUR-TILLE", "ARGILLY", "ARNAY-LE-DUC", "ASNIERES-LES-DIJON", "ATHIE", "AUBIGNY-EN-PLAINE", "AUBIGNY-LA-RONCE", "AUTRICOURT", "AUXONNE", "AVELANGES", "AVOSNES", "AVOT", "BAGNOT", "BAIGNEUX-LES-JUIFS", "BALOT", "BARBIREY-SUR-OUCHE", "BARD-LE-REGULIER", "BARD-LES-EPOISSES", "BARGE", "BAR-LES-SEUR", "BAUBIGNY", "BAULME-LA-ROCHE", "BEAULIEU", "BEAUMONT-SUR-VINGEANNE", "BEAUNE", "BEIRE-LE-CHATEL", "BEIRE-LE-FORT", "BELAN-SUR-OURCE", "BELLEFOND", "BELLEVENEUVRE", "BELLENEVRE", "BELLENOT-SOUS-POUILLY", "BELLENOT-SUR-SEINE", "BESSEY-EN-CHAUME", "BESSEY-LA-COUR", "BESSEY-LES-CITEAUX", "BEURIZOT", "BEUVE-MERY", "BEZE", "BEZOUOTTE", "BIARE-SUR-OUCHE", "BILLEY", "BILLY-LES-CHANCEAUX", "BINGES", "BLAGNY-SUR-VINGEANNE", "BLAISY-BAS", "BLAISY-HAUT", "BLANOT", "BLIGNY-LE-SEC", "BLIGNY-SUR-OUCHE", "BONCOURT-LE-BOIS", "BOUDROT", "BOUILLAND", "BOUIX", "BOULHES", "BOUQUEROT", "BOUX-SOUS-SALMAISE", "BRAUX", "BRAZEY-EN-MORVAN", "BRAZEY-EN-PLAINE", "BREMUR-ET-VAUROIS", "BRESSAY", "BRETENIERE", "BRETIGNY", "BRIANNY", "BRION-SUR-OURCE", "BROCHON", "BROGNON", "BROIN", "BROINDON", "BUFFON", "BURE-LES-TEMPLIERS", "BUSSEAUT", "BUSSEROTTE-ET-MONTENAILLE", "BUSSIERES", "BUSSSEY-LA-PESLE", "BUSSEY-LE-GRAND", "BUSSSEY-LES-ECHALOT", "CENNES", "CERILLY", "CESSEY-SUR-TILLE", "CHAILLY-SUR-ARMANCON", "CHALANCEY", "CHALAIN-D'UZEL", "CHALAMONT", "CHALLES", "CHAMBOEUF", "CHAMBOLLE-MUSIGNY", "CHAMMEUME", "CHAMPAIN", "CHAMPDOTRE", "CHAMPEAU-EN-MORVAN", "CHAMPAGNE-SUR-VINGEANNE", "CHAMPAGNY", "CHAMPD'OISEAU", "CHAMPIGNEULLE", "CHANCEAUX", "CHANNAY", "CHARENCEY", "CHARIGNY", "CHARMES", "CHARNY", "CHARREY-SUR-SAONE", "CHARREY-SUR-SEINE", "CHASSAGNE-MONTRACHET", "CHASNANS", "CHATEAUNEUF", "CHATILLON-SUR-SEINE", "CHAUDENAY-LA-VILLE", "CHAUDENAY-LE-CHATEAU", "CHAUX", "CHAUME-LES-BAIGNEUX", "CHAUMONT-LE-BOIS", "CHAZILLY", "CHEMIN-D'AISEY", "CHENNOVE", "CHEVANNES", "CHEVIGNY-EN-VALIERE", "CHEVIGNY-SAINT-SAUVEUR", "CHEVIGNY-SOUS-COCHIN", "CHIVRES", "CHOREY-LES-BEAUNE", "CLAMEREY", "CLEMENCEY", "CLENAY", "CLERY", "CLMOT-LES-DIJON", "COLOMBIER", "COMMARIN", "CORCELLES-LES-CITEAUX", "CORCELLES-LES-MONTS", "CORCELLES-LES-ARTS", "CORGOLOIN", "CORGOLON", "CORMATOT", "CORPEAU", "CORPOMONT", "CORRUE-LES-MONTS", "CORSINT", "COURBAN", "COURCELLES-FREMOY", "COURCELLES-LES-MONTBARD", "COURCELLES-LES-SEMUR", "COURCHAMP", "COURON", "COUTERNON", "COUVRAY", "CREANCEY", "CREPAN", "CRUGEY", "CUISELEY", "CURLEY", "CURTIL-SAINT-DENIS", "CURTIL-VERGY", "CUSSEY-LES-FORGES", "DAIX", "DAMPIERRE-EN-MONTAGNE", "DAMPIERRE-ET-FLEE", "DARCEY", "DAROIS", "DETRAIN", "DIANCEY", "DIJON", "DOMOIS", "DREE", "DUN-LES-PLACES", "ECHALOT", "ECHANNAY", "ECHENOISE-SUR-ARMANCON", "ECHEVRONNE", "ECHIGEY", "ECRIOLLES", "EGUILLY", "EPERNAY-SOUS-GEVREY", "EPOISSES", "EPONNEY", "EPONNEY-LE-FRANC", "ERNAY", "ESBARRES", "ESSAROIS", "ESSEY", "ETAILANTE", "ETALANTE", "ETANG-SUR-ARROUX", "ETEVAUX", "ETORNAY", "ETROCHEY", "FAIN-LES-MONTBARD", "FAIN-LES-MOUTIERS", "FAUVERNEY", "FELIX-DE-LODIN", "FENAY", "FERRIERE-SUR-RECHEL", "FIXIN", "FLAGEY-ECHÉZEAUX", "FLAMMERANS", "FLAVIGNEROT", "FLAVIGNY-SUR-OZERAIN", "FLEE", "FLEUREY-SUR-OUCHE", "FOISSY", "FONCEGRIVE", "FONTAINE-EN-DUESMOIS", "FONTAINE-FRANCAISE", "FONTAINE-LES-DIJON", "FONTANGES", "FONTENAY", "FONTENELLE", "FORLEANS", "FRAIGNOT-ET-VESVROTTE", "FRANCHEVILLE", "FRANOIS", "FRENES", "FROLOIS", "GEMEAUX", "GENAY", "GENLIS", "GERGUEIL", "GERLAND", "GEVREY-CHAMBERTIN", "GEVROLLES", "GILLY-LES-CITEAUX", "GISSEY-LE-VIEIL", "GISSEY-SOUS-FLAVIGNY", "GISSEY-SUR-OUCHE", "GLANON", "GOMMEVILLE", "GRANCEY-LE-CHATEAU-NEUVELLE", "GRANCEY-SUR-OURCE", "GRENAY", "GRESIGNY-SAINTE-REINE", "GRIGNON", "GUMERY", "GURGY-LA-VILLE", "GURGY-LE-CHATEAU", "HAUTEROCHE", "HAUTEVILLE-LES-DIJON", "HEUILLEY-SUR-SAONE", "IS-SUR-TILLE", "IVRY-EN-MONTAGNE", "IVOY-LE-PRE", "IZEURE", "IZIER", "JAILLY-LES-MOULINS", "JALLANGES", "JANCIGNY", "JEUX-LES-BARD", "JOUEY", "JUILLENAY", "JUILLY", "LABERGEMENT-FOIGNEY", "LABERGEMENT-LES-AUXONNE", "LABERGEMENT-LES-SEUR", "LABRUYERE", "LA CANIERE", "LA CHAUME", "LADOUX", "LA GESTE", "LAMARCHE-SUR-SAONE", "LANTE", "LANTHENAY", "LANTENAY", "LAPERRIERE-SUR-SAONE", "LARREY", "LA ROCHE-EN-BRENIL", "LA ROCHE-POT", "LA ROCHEPOT", "LA ROCHE-VANNEAU", "LA VILLENEUVE-LES-CONVERS", "LECHATELET", "LE FETE", "LE GLEU", "LE MEIX", "LEMEIX", "LENAY", "LERY", "LEUGLAY", "LEUILLE", "LEVERNOIS", "LIERNAIS", "LIGNEROLLES", "LONGCHAMP", "LONGEAULT", "LONGECOURT-EN-PLAINE", "LONGECOURT-LES-CULETRE", "LONGVIC", "LOSNE", "LOUESME", "LUCEY", "LUCENAY-LE-DUC", "LUSIGNY-SUR-OUCHE", "LUX", "MAGNY-LA-VILLE", "MAGNY-LAMBERT", "MAGNY-LES-AUBIGNY", "MAGNY-LES-VILLERS", "MAGNY-MONTARLOT", "MAGNY-SAINT-MEDARD", "MAGNY-SUR-TILLE", "MAILLY-LA-VILLE", "MAILLY-LE-CHATEAU", "MALAIN", "MALIGNY", "MANLAY", "MARANDEUIL", "MARCELLOIS", "MARCENAY", "MARCHSEUIL", "MARCILLY-ET-DRACY", "MARCILLY-OGNY", "MARCILLY-SUR-TILLE", "MAREY-LES-FUSSEY", "MAREY-SUR-TILLE", "MARIGNY-LE-CAHOUET", "MARIGNY-LES-REULLEE", "MARLIENS", "MARMAGNE", "MARSANNAY-LA-COTE", "MARSANNAY-LE-BOIS", "MARTROIS", "MASSINGY", "MASSINGY-LES-SEMUR", "MASSINGY-LES-VITTEAUX", "MAUVILLY", "MAXILLY-SUR-SAONE", "MEILLY-SUR-ROUVRES", "MELOISEY", "MENESSEIL", "MENETREUX-LE-PITTORESQUE", "MERCEUIL", "MESMONT", "MESSIGNY-ET-VANTOUX", "MEULSON", "MEURSAULT", "MEURSANGES", "MEURSANGLES", "MIMEURE", "MINOT", "MIREBEAU-SUR-BEZE", "MISSERY", "MOITRON", "MOLESME", "MOLLIERE", "MOLINOT", "MOLPHEY", "MOLPHEY", "MOLOY", "MOLPHEY", "MONTAGNY-LES-BEAUNE", "MONTAGNY-LES-SEUR", "MONTBARD", "MONTBERTHAUT", "MONTCEAU-ET-ECHARNANT", "MONTELIER", "MONTIGNY-MORNNAY-VILLENEUVE-SUR-VINGEANNE", "MONTIGNY-SAINT-BARTHELEMY", "MONTIGNY-SUR-ARMANCON", "MONTIGNY-SUR-AUBE", "MONT LAY-EN-AUXOIS", "MONTLIARD", "MONTMAIN", "MONTMANCON", "MONTOILLOT", "MONTOT", "MONTPANCON", "MONTSALIER", "MOREY-SAINT-DENIS", "MOSSON", "MOUSTIERS-SAINT-JEAN", "MUTIGNEY", "NAN-SOUS-THIL", "NANTOUX", "NEILLY", "NESSIGNY", "NICEEY", "NOD-SUR-SEINE", "NOGENT-LES-MONTBARD", "NOIRON-SUR-BEZE", "NOIRON-SUR-SEINE", "NOLAY", "NORGES-LA-VILLE", "NORMIER", "NUITS-SAINT-GEORGES", "OBTREEY", "OGNY", "OIGNY", "OISILLY", "ORAIN", "ORGEUX", "ORIGNY-SUR-SEINE", "ORRET", "ORVILLE", "OSERAY", "OS-SUR-TILLE", "OUGES", "PACEY", "PAGNY-LA-VILLE", "PAGNY-LE-CHATEAU", "PAINBLANC", "PAMPIN", "PANGES", "PASQUES", "PELLEREY", "PERNAND-VERGELESSES", "PERRIGNY-LES-DIJON", "PERRIGNY-SUR-L'OGNON", "PICHANGES", "PLANAY", "PLOMBIERES-LES-DIJON", "PLUVET", "PLUVAULT", "POMMARD", "PONCEY-LES-ATHEE", "PONCEY-SUR-L'IGNON", "PONT", "PONT-A-MOUSSON", "PONTALIER-SUR-SAONE", "PONT-ET-MASSENE", "POSANGES", "POTANGEY", "POUILLENAY", "POUILLY-EN-AUXOIS", "POUILLY-SUR-SAONE", "POUILLY-SUR-VINGEANNE", "PRALON", "PRECY-SOUS-THIL", "PREMEAUX-PRISSEY", "PREMIERE", "PRENOIS", "PRUSLY-SUR-OURCE", "PUITS", "PULIGNY-MONTRACHET", "QUEMIGNY-POISOT", "QUEMIGNY-SUR-SEINE", "QUETIGNY", "QUINCEY", "QUINCEY", "QUINCIEUX", "RECEY-SUR-OURCE", "REULLEE", "REMIREY", "RIEL-LES-EAUX", "ROCHEFORT", "ROUVRAY", "ROUVRES-EN-PLAINE", "SAFFRES", "SAINT-ANDRE-SUR-OUCHE", "SAINT-ANTHOT", "SAINT-APOLLINAIRE", "SAINT-AUBIN", "SAINT-BERNARD", "SAINT-BROING-LES-MOINES", "SAINT-DIDIER", "SAINTE-COLOMBE", "SAINTE-COLOMBE-SUR-SEINE", "SAINTE-MARIE-LA-BLANCHE", "SAINTE-MARIE-SUR-OUCHE", "SAINTE-SABINE", "SAINT-EUPHRONE", "SAINT-GERMAIN-DE-MODREON", "SAINT-GERMAIN-LE-ROCHEUX", "SAINT-GERMAIN-LES-SENAILEY", "SAINT-GERMAIN-SOURCE-SEINE", "SAINT-HELIER", "SAINT-JEAN-DE-BOEUF", "SAINT-JEAN-DE-LOSNE", "SAINT-JULIEN", "SAINT-LEGER-TRIEY", "SAINT-MARC-SUR-SEINE", "SAINT-MARTIN-DE-LA-MER", "SAINT-MARTIN-DU-MONT", "SAINT-MAURICE-SUR-VINGEANNE", "SAINT-MESMIN", "SAINT-NICOLAS-LES-CITEAUX", "SAINT-PHILIBERT", "SAINT-PIERRE-EN-VAUX", "SAINT-PRIX-LES-ARNAY", "SAINT-REMY", "SAINT-REVERSEUL", "SAINT-ROMAIN", "SAINT-SAMPSON", "SAINT-SEINE-EN-BACHE", "SAINT-SEINE-L'ABBAYE", "SAINT-SEINE-SUR-VINGEANNE", "SAINT-SYMPHORIEN-SUR-SAONE", "SAINT-THIBAULT", "SAINT-USAGE", "SAINT-VICTOR-SUR-OUCHE", "SALIVE", "SALMAISE", "SAMEREY", "SANTENAY", "SANTOSSE", "SAULIEU", "SAULON-LA-CHAPELLE", "SAULON-LA-RUE", "SAULX-LE-DUC", "SAUSSEY", "SAVIGNY-LE-SEC", "SAVIGNY-LES-BEAUNE", "SAVIGNY-SOUS-MALAIN", "SAVILLY", "SAVOISY", "SCAY-SUR-SAONE", "SEIGNY", "SELONGEY", "SEMUR-EN-AUXOIS", "SENNECEY-LES-DIJON", "SEUR", "SOIRANS", "SOISSONS-SUR-NACEY", "SOMBERNON", "SOUHEY", "SOURRE-LES-MONTS", "SOUSSEY-SUR-BRIONNE", "SPONVILLE", "TALANT", "TALMAY", "TANAY", "TARSUL", "TART-L'ABBAYE", "TART-LE-BAS", "TART-LE-HAUT", "TAUX", "TELEE", "TERRE-DE-BAS", "TERRE-DE-HAUT", "TERNANT", "TERREFONDREE", "THENISSEY", "THOREY-EN-PLAINE", "THOREY-SOUS-CHARNY", "THOREY-SUR-OUCHE", "THOSTE", "THURY", "TILLECHATEL", "TILLENAY", "TORCY-ET-POULIGNY", "TOUILLON", "TOUTRY", "TRECLUN", "TROCHEREAU", "TROCHÈRES", "TROUHAN", "TROUHAUT", "TRUCHE", "TURCEY", "UNCEY-LE-FRANC", "URCY", "VAL-SUZON", "VANDENESSE-EN-AUXOIS", "VANNAIRE", "VANT-LE-BAS", "VANVEY", "VAROIS-ET-CHAIGNOT", "VARANGES", "VAUCHIGNON", "VAULX", "VELARS-SUR-OUCHE", "VELOGNY", "VENAREY-LES-LAUMES", "VERDONNET", "VERNANTOIS", "VERNOIS-LES-BELVRE", "VERNONOT-SUR-SEINE", "VERREY-SOUS-DRÉE", "VERREY-SOUS-SALMAISE", "VERTILLT", "VEUVIEY", "VEUVEY-SUR-OUCHE", "VIERVILLE", "VIEVY", "VIGNOLLES", "VILLAINES-EN-DUESMOIS", "VILLAINES-LES-PREVOTES", "VILLARGOIX", "VILLARS-ET-VILLENOTTE", "VILLARS-FONTAINE", "VILLEBERNY", "VILLE-DE-MESSY", "VILLEFERRY", "VILLENEUVE-SOUS-CHARNY", "VILLERS-LA-FAYE", "VILLERS-LES-POTS", "VILLERS-PATRAS", "VILLERS-ROTIN", "VILLEY-SUR-TILLE", "VILLIERS-EN-MORVAN", "VILLIERS-LE-DUC", "VILLOTTE-SAINT-SEINE", "VILLOTTE-SUR-OURCE", "VINGEANNE", "VISERNY", "VITTEAUX", "VIX", "VOLNAY", "VONGE", "VOSNE-ROMANEE", "VOTEUIL", "VOUDENAY", "VOUGEOT", "VRILLY"
+];
+
+// Known Centres de Secours for dropdown
+const centres21 = [
+  "AIGNAY-LE-DUC", "ARNAY-LE-DUC", "AIGNAY", "AUXONNE", "AISEREY", "ARC-SUR-TILLE", "AISEY",
+  "BAIGNEUX-LES-JUIFS", "BEAUNE", "BLIGNY-SUR-OUCHE", "BRAZEY-EN-PLAINE",
+  "CHATILLON-SUR-SEINE", "DIJON EST", "DIJON NORD", "DIJON SUD", "DIJON TRANSVAAL",
+  "FONTAINE-FRANCAISE", "GENLIS", "IS-SUR-TILLE", "LIERNAIS", "LAIGNES", "LEGLAY-VOULAINES",
+  "MIREBEAU-SUR-BEZE", "MONTBARD", "MONTIGNY-SUR-AUBE", "MEURSAULT", "NOLAY",
+  "NUITS-ST-GEORGES", "PONTAILLER", "POUILLY-EN-AUXOIS", "PRECY-SOUS-THIL", "RECEY-SUR-OURCE", "SAULIEU",
+  "SELONGEY", "SEMUR-EN-AUXOIS", "SEURRE", "SOMBERNON", "ST-JEAN-DE-LOSNE", "ST-SEINE-L'ABBAYE",
+  "VELARS-SUR-OUCHE", "VENAREY-LES-LAUMES", "VITTEAUX"
+];
+const centres71 = [
+  "AUTUN", "CHAGNY", "CHALON-SUR-SAONE", "CHAROLLES", "CLUNY", "DIGOIN", "GUEUGNON", "LE CREUSOT", "LOUHANS", "MACON", "MONTCEAU", "PARAY-LE-MONIAL", "TOURNUS"
+];
+const centres58 = ["CHATEAU-CHINON", "CLAMECY", "COSNE-SUR-LOIRE", "DECIZE", "LA CHARITE", "LORMES", "LUZY", "NEVERS"];
+const centres89 = ["AUXERRE", "AVALLON", "CHABLIS", "JOIGNY", "MIGENNES", "PONT-SUR-YONNE", "SENS", "TONNERRE"];
+const centres10 = ["BAR-SUR-AUBE", "BAR-SUR-SEINE", "NOGENT-SUR-SEINE", "ROMILLY-SUR-SEINE", "TROYES"];
+const centres52 = ["BOURBONNE-LES-BAINS", "CHAUMONT", "JOINVILLE", "LANGRES", "ST-DIZIER"];
+const centres70 = ["GRAY", "LURE", "LUXEUIL", "MARNAY", "RIOZ", "VESOUL"];
+const centres39 = ["ARBOIS", "CHAMPAGNOLE", "DOLE", "LONS-LE-SAUNIER", "POLIGNY", "SALINS-LES-BAINS", "ST-CLAUDE"];
+
+const default_voies = [
+  "Rue ", "Avenue ", "Boulevard ", "Impasse ", "Allée ", "Route ", "Chemin ", "Place ", "Lieu-dit "
+];
 
 const getVehiclePermitType = (engin, customVehicles = []) => {
   if (!engin) return 'VL';
@@ -52,6 +113,40 @@ function App() {
       permisPL: p.permisPL !== undefined ? p.permisPL : false
     })).sort((a, b) => (a.nom || "").localeCompare(b.nom || ""));
   });
+
+  const handleExportPersonnel = () => {
+    const dataStr = JSON.stringify(pompiers, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = 'liste_personnel_pompiers.json';
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  const handleImportPersonnel = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const imported = JSON.parse(e.target.result);
+        if (Array.isArray(imported)) {
+          if (confirm(`Importer ${imported.length} pompiers ? Cela remplacera votre liste actuelle.`)) {
+            setPompiers(imported);
+          }
+        } else {
+          alert("Format de fichier invalide.");
+        }
+      } catch (err) {
+        alert("Erreur lors de la lecture du fichier.");
+      }
+    };
+    reader.readAsText(file);
+    // Reset input
+    event.target.value = '';
+  };
+
   const [showSettings, setShowSettings] = useState(false);
   const [showManual, setShowManual] = useState(false);
 
@@ -170,46 +265,43 @@ function App() {
     // Auto-update CTA
     setCta(`ST03-CTA-${departement}`);
 
+    // If it's department 21, use our hardcoded fallback list as a starting point
+    if (departement === '21') {
+      setCommunesList(communes21_fallback);
+    } else {
+      setCommunesList([]);
+    }
+
+    // Try to fetch updated/more precise list from API
     fetch(`https://geo.api.gouv.fr/communes?codeDepartement=${departement}&fields=nom&format=json`)
-      .then(res => res.json())
+      .then(res => res.ok ? res.json() : [])
       .then(data => {
-        const names = data.map(c => c.nom).sort();
-        setCommunesList(names);
+        if (Array.isArray(data)) {
+          const names = data.map(c => c.nom).filter(Boolean).sort();
+          if (names.length > 0) setCommunesList(names);
+        }
       })
-      .catch(err => console.error("Erreur de chargement des communes:", err));
+      .catch(() => {});
   }, [departement]);
 
-  // Known Centres de Secours for dropdown
-  const centres21 = [
-    "AIGNAY-LE-DUC", "ARNAY-LE-DUC", "AIGNAY", "AUXONNE", "AISEREY", "ARC-SUR-TILLE", "AISEY",
-    "BAIGNEUX-LES-JUIFS", "BEAUNE", "BLIGNY-SUR-OUCHE", "BRAZEY-EN-PLAINE",
-    "CHATILLON-SUR-SEINE", "DIJON EST", "DIJON NORD", "DIJON SUD", "DIJON TRANSVAAL",
-    "FONTAINE-FRANCAISE", "GENLIS", "IS-SUR-TILLE", "LIERNAIS", "LAIGNES", "LEGLAY-VOULAINES",
-    "MIREBEAU-SUR-BEZE", "MONTBARD", "MONTIGNY-SUR-AUBE", "MEURSAULT", "NOLAY",
-    "NUITS-ST-GEORGES", "PONTAILLER", "POUILLY-EN-AUXOIS", "PRECY-SOUS-THIL", "RECEY-SUR-OURCE", "SAULIEU",
-    "SELONGEY", "SEMUR-EN-AUXOIS", "SEURRE", "SOMBERNON", "ST-JEAN-DE-LOSNE", "ST-SEINE-L'ABBAYE",
-    "VELARS-SUR-OUCHE", "VENAREY-LES-LAUMES", "VITTEAUX"
-  ];
-  const centres71 = [
-    "AUTUN", "CHAGNY", "CHALON-SUR-SAONE", "CHAROLLES", "CLUNY", "DIGOIN", "GUEUGNON", "LE CREUSOT", "LOUHANS", "MACON", "MONTCEAU", "PARAY-LE-MONIAL", "TOURNUS"
-  ];
-  const centres58 = ["CHATEAU-CHINON", "CLAMECY", "COSNE-SUR-LOIRE", "DECIZE", "LA CHARITE", "LORMES", "LUZY", "NEVERS"];
-  const centres89 = ["AUXERRE", "AVALLON", "CHABLIS", "JOIGNY", "MIGENNES", "PONT-SUR-YONNE", "SENS", "TONNERRE"];
-  const centres10 = ["BAR-SUR-AUBE", "BAR-SUR-SEINE", "NOGENT-SUR-SEINE", "ROMILLY-SUR-SEINE", "TROYES"];
-  const centres52 = ["BOURBONNE-LES-BAINS", "CHAUMONT", "JOINVILLE", "LANGRES", "ST-DIZIER"];
-  const centres70 = ["GRAY", "LURE", "LUXEUIL", "MARNAY", "RIOZ", "VESOUL"];
-  const centres39 = ["ARBOIS", "CHAMPAGNOLE", "DOLE", "LONS-LE-SAUNIER", "POLIGNY", "SALINS-LES-BAINS", "ST-CLAUDE"];
+  const centres71_list = ["AUTUN", "CHAGNY", "CHALON-SUR-SAONE", "CHAROLLES", "CLUNY", "DIGOIN", "GUEUGNON", "LE CREUSOT", "LOUHANS", "MACON", "MONTCEAU", "PARAY-LE-MONIAL", "TOURNUS"];
+  const centres58_list = ["CHATEAU-CHINON", "CLAMECY", "COSNE-SUR-LOIRE", "DECIZE", "LA CHARITE", "LORMES", "LUZY", "NEVERS"];
+  const centres89_list = ["AUXERRE", "AVALLON", "CHABLIS", "JOIGNY", "MIGENNES", "PONT-SUR-YONNE", "SENS", "TONNERRE"];
+  const centres10_list = ["BAR-SUR-AUBE", "BAR-SUR-SEINE", "NOGENT-SUR-SEINE", "ROMILLY-SUR-SEINE", "TROYES"];
+  const centres52_list = ["BOURBONNE-LES-BAINS", "CHAUMONT", "JOINVILLE", "LANGRES", "ST-DIZIER"];
+  const centres70_list = ["GRAY", "LURE", "LUXEUIL", "MARNAY", "RIOZ", "VESOUL"];
+  const centres39_list = ["ARBOIS", "CHAMPAGNOLE", "DOLE", "LONS-LE-SAUNIER", "POLIGNY", "SALINS-LES-BAINS", "ST-CLAUDE"];
 
   let currentCentresList = [];
   switch (departement) {
     case '21': currentCentresList = centres21; break;
-    case '71': currentCentresList = centres71; break;
-    case '58': currentCentresList = centres58; break;
-    case '89': currentCentresList = centres89; break;
-    case '10': currentCentresList = centres10; break;
-    case '52': currentCentresList = centres52; break;
-    case '70': currentCentresList = centres70; break;
-    case '39': currentCentresList = centres39; break;
+    case '71': currentCentresList = centres71_list; break;
+    case '58': currentCentresList = centres58_list; break;
+    case '89': currentCentresList = centres89_list; break;
+    case '10': currentCentresList = centres10_list; break;
+    case '52': currentCentresList = centres52_list; break;
+    case '70': currentCentresList = centres70_list; break;
+    case '39': currentCentresList = centres39_list; break;
     default: currentCentresList = [];
   }
 
@@ -219,10 +311,10 @@ function App() {
 
     const lowercasedSearch = searchTerm.toLowerCase();
     return motifsData.filter(item =>
-      (item.motif && item.motif.toLowerCase().includes(lowercasedSearch)) ||
-      (item.code && item.code.toLowerCase().includes(lowercasedSearch)) ||
-      (item.vehicule && item.vehicule.toLowerCase().includes(lowercasedSearch)) ||
-      (item.commune && item.commune.toLowerCase().includes(lowercasedSearch))
+      (item.motif && String(item.motif).toLowerCase().includes(lowercasedSearch)) ||
+      (item.code && String(item.code).toLowerCase().includes(lowercasedSearch)) ||
+      (item.vehicule && String(item.vehicule).toLowerCase().includes(lowercasedSearch)) ||
+      (item.commune && String(item.commune).toLowerCase().includes(lowercasedSearch))
     );
   }, [searchTerm]);
 
@@ -572,9 +664,7 @@ function App() {
     setTicketData({ ...ticketData, personnel: newPersonnel });
   };
 
-  const [voiesList, setVoiesList] = useState([
-    "Rue ", "Avenue ", "Boulevard ", "Impasse ", "Allée ", "Route ", "Chemin ", "Place ", "Lieu-dit "
-  ]);
+  const [voiesList, setVoiesList] = useState(default_voies);
 
   // Fetch streets dynamically when commune or voie changes
   useEffect(() => {
@@ -585,14 +675,16 @@ function App() {
       const query = ticketData.voie ? `${ticketData.voie} ${ticketData.commune}` : ticketData.commune;
 
       fetch(`https://api-adresse.data.gouv.fr/search/?q=${encodeURIComponent(query)}&type=street&limit=15`)
-        .then(res => res.json())
+        .then(res => res.ok ? res.json() : null)
         .then(data => {
-          if (data && data.features && data.features.length > 0) {
+          if (data && data.features && Array.isArray(data.features)) {
             const streets = data.features.map(f => f.properties.name);
             setVoiesList([...new Set(streets)]);
           }
         })
-        .catch(err => console.error("Erreur de chargement des voies:", err));
+        .catch(err => {
+          // Silent fail for offline mode
+        });
     }, 400);
 
     return () => clearTimeout(timeoutId);
@@ -684,7 +776,7 @@ function App() {
           </div>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
-          <img src="/logo.png" alt="Logo Pompier" style={{ width: '60px', height: 'auto' }} />
+          <img src="./logo.png" alt="Logo Pompier" style={{ width: '60px', height: 'auto' }} />
           <h1 style={{ margin: 0 }}>Mes Manoeuvres</h1>
         </div>
         <p>Générateur d'Ordre de Départ (OD)</p>
@@ -698,8 +790,10 @@ function App() {
           <h2 className="section-title">1. Démarrage de l'application</h2>
           <p>L'application est conçue pour fonctionner sans installation complexe et sans nécessiter de connexion internet.</p>
           <ul style={{ paddingLeft: '1.5rem', marginBottom: '1rem' }}>
-            <li><strong>Si vous utilisez une clé USB ou un CD :</strong> Ouvrez le dossier de votre clé/CD et double-cliquez simplement sur le fichier <code>index.html</code>. L'application s'ouvrira dans votre navigateur web habituel.</li>
-            <li><em>Rappel important :</em> Les paramètres et la liste du personnel que vous renseignez sont sauvegardés <strong>dans la mémoire du navigateur de l'ordinateur</strong> sur lequel vous vous trouvez, et non sur la clé USB elle-même.</li>
+            <li><strong>Option A (Recommandée) :</strong> Double-cliquez sur le fichier <code>Mes Manoeuvres Setup.exe</code> pour installer l'application sur l'ordinateur. C'est le mode le plus stable et complet.</li>
+            <li><strong>Option B (Portable) :</strong> Si vous ne voulez pas installer, ouvrez le dossier <code>win-unpacked</code> et lancez <code>Mes Manoeuvres.exe</code>.</li>
+            <li><strong>Option C (Navigateur) :</strong> Double-cliquez sur le fichier <code>index.html</code>. L'application s'ouvrira dans votre navigateur (Chrome, Edge...).</li>
+            <li><em>Rappel important :</em> Vos réglages (personnel, véhicules) sont sauvegardés sur l'ordinateur. Pour passer d'un ordinateur à un autre, utilisez les boutons <strong>Exporter / Importer</strong> dans les Paramètres.</li>
           </ul>
 
           <h2 className="section-title">2. Configuration Initiale</h2>
@@ -738,7 +832,18 @@ function App() {
         </div>
       ) : showSettings ? (
         <div className="settings-container no-print">
-          <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', marginBottom: '2rem' }}>Gestion du Personnel</h2>
+          <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', marginBottom: '1rem' }}>Gestion du Personnel</h2>
+          
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '2rem' }}>
+            <button className="btn-small" style={{ background: '#4a5568' }} onClick={handleExportPersonnel}>
+              📤 Sauvegarder la liste sur la clé (Export)
+            </button>
+            <label className="btn-small" style={{ background: '#4a5568', cursor: 'pointer', display: 'inline-block' }}>
+              📥 Charger une liste (Import)
+              <input type="file" accept=".json" style={{ display: 'none' }} onChange={handleImportPersonnel} />
+            </label>
+          </div>
+
           <div className="table-responsive">
             <table className="personnel-table settings-table">
               <thead>
@@ -1058,64 +1163,71 @@ function App() {
                 <div className="form-grid">
                   <div className="form-group">
                     <label htmlFor="input-commune">Commune</label>
-                    <input
-                      type="text"
+                    <select
                       id="input-commune"
-                      ref={communeRef}
-                      list="communes-list"
                       value={ticketData.commune}
-                      onFocus={(e) => e.target.select()}
                       onChange={(e) => setTicketData({ ...ticketData, commune: e.target.value })}
-                    />
-                    <div className="dropdown-arrow-icon" onClick={() => {
-                      setTicketData(prev => ({ ...prev, commune: '' }));
-                      setTimeout(() => {
-                        if (communeRef.current && communeRef.current.showPicker) {
-                          try { communeRef.current.showPicker(); } catch(err) {}
-                        }
-                      }, 50);
-                    }}></div>
+                      className="ticket-select no-print"
+                    >
+                      <option value="">-- Sélectionner une commune --</option>
+                      {communesList.map((c, i) => <option key={i} value={c}>{c}</option>)}
+                    </select>
+                    <div className="print-only" style={{ flex: 1, paddingLeft: '5px' }}>
+                      {ticketData.commune}
+                    </div>
                   </div>
                   <div className="form-group">
                     <label htmlFor="input-voie">Voie</label>
-                    <input
-                      type="text"
-                      id="input-voie"
-                      ref={voieRef}
-                      list="voies-list"
-                      value={ticketData.voie}
-                      onFocus={(e) => e.target.select()}
-                      onChange={(e) => setTicketData({ ...ticketData, voie: e.target.value })}
-                    />
-                    <div className="dropdown-arrow-icon" onClick={() => {
-                      setTicketData(prev => ({ ...prev, voie: '' }));
-                      setTimeout(() => {
-                        if (voieRef.current && voieRef.current.showPicker) {
-                          try { voieRef.current.showPicker(); } catch(err) {}
-                        }
-                      }, 50);
-                    }}></div>
+                    <div className="no-print" style={{ display: 'flex', gap: '5px', flex: 1 }}>
+                      <select
+                        style={{ width: '100px' }}
+                        onChange={(e) => {
+                          const typeMatch = ticketData.voie.match(/^(Rue|Avenue|Boulevard|Impasse|Allée|Route|Chemin|Place|Lieu-dit)\s/);
+                          const currentName = typeMatch ? ticketData.voie.replace(typeMatch[0], '') : ticketData.voie;
+                          setTicketData({ ...ticketData, voie: e.target.value + currentName });
+                        }}
+                        className="ticket-select"
+                        value={ticketData.voie.match(/^(Rue|Avenue|Boulevard|Impasse|Allée|Route|Chemin|Place|Lieu-dit)\s/)?.[0] || ""}
+                      >
+                        <option value="">Type...</option>
+                        {default_voies.map((v, i) => <option key={i} value={v}>{v}</option>)}
+                      </select>
+                      <input
+                        type="text"
+                        placeholder="Nom de la voie"
+                        value={ticketData.voie.replace(/^(Rue|Avenue|Boulevard|Impasse|Allée|Route|Chemin|Place|Lieu-dit)\s/, '')}
+                        onChange={(e) => {
+                          const typeMatch = ticketData.voie.match(/^(Rue|Avenue|Boulevard|Impasse|Allée|Route|Chemin|Place|Lieu-dit)\s/);
+                          const prefix = typeMatch ? typeMatch[0] : '';
+                          setTicketData({ ...ticketData, voie: prefix + e.target.value });
+                        }}
+                      />
+                    </div>
+                    <div className="print-only" style={{ flex: 1, paddingLeft: '5px' }}>
+                      {ticketData.voie}
+                    </div>
                   </div>
 
                   <div className="form-group">
                     <label htmlFor="input-contact">Contact</label>
-                    <input
-                      type="text"
+                    <select
                       id="input-contact"
-                      ref={contactRef}
-                      list="contacts-list"
                       value={ticketData.contact}
-                      onFocus={(e) => e.target.select()}
                       onChange={(e) => setTicketData({ ...ticketData, contact: e.target.value })}
-                    />
-                    <div className="dropdown-arrow-icon" onClick={() => {
-                      setTicketData(prev => ({ ...prev, contact: '' }));
-                      setTimeout(() => {
-                        if (contactRef.current && contactRef.current.showPicker) {
-                          try { contactRef.current.showPicker(); } catch(err) {}
-                        }
-                      }, 50);
-                    }}></div>
+                      className="ticket-select no-print"
+                    >
+                      <option value="">-- Sélectionner un contact --</option>
+                      <option value="Appelant">Appelant</option>
+                      <option value="Gendarmerie">Gendarmerie</option>
+                      <option value="Police">Police</option>
+                      <option value="SAMU">SAMU</option>
+                      <option value="Mairie">Mairie</option>
+                      <option value="Enedis">Enedis</option>
+                      <option value="GRDF">GRDF</option>
+                    </select>
+                    <div className="print-only" style={{ flex: 1, paddingLeft: '5px' }}>
+                      {ticketData.contact}
+                    </div>
                   </div>
                   <div className="form-group">
                     <label htmlFor="input-plan">N° de plan</label>
@@ -1266,4 +1378,10 @@ function App() {
   );
 }
 
-export default App;
+export default function Root() {
+  return (
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
+  );
+}
