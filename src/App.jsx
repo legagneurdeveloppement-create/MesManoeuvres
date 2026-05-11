@@ -1309,28 +1309,15 @@ function App() {
                   <div className="form-group">
                     <label htmlFor="input-voie">Voie</label>
                     <div className="no-print" style={{ display: 'flex', gap: '5px', flex: 1 }}>
-                      <select
-                        style={{ width: '100px' }}
-                        onChange={(e) => {
-                          const typeMatch = ticketData.voie.match(/^(Rue|Avenue|Boulevard|Impasse|Allée|Route|Chemin|Place|Lieu-dit)\s/);
-                          const currentName = typeMatch ? ticketData.voie.replace(typeMatch[0], '') : ticketData.voie;
-                          setTicketData({ ...ticketData, voie: e.target.value + currentName });
-                        }}
-                        className="ticket-select"
-                        value={ticketData.voie.match(/^(Rue|Avenue|Boulevard|Impasse|Allée|Route|Chemin|Place|Lieu-dit)\s/)?.[0] || ""}
-                      >
-                        <option value="">Type...</option>
-                        {default_voies.map((v, i) => <option key={i} value={v}>{v}</option>)}
-                      </select>
                       <input
+                        id="input-voie"
                         type="text"
-                        placeholder="Nom de la voie"
-                        value={ticketData.voie.replace(/^(Rue|Avenue|Boulevard|Impasse|Allée|Route|Chemin|Place|Lieu-dit)\s/, '')}
-                        onChange={(e) => {
-                          const typeMatch = ticketData.voie.match(/^(Rue|Avenue|Boulevard|Impasse|Allée|Route|Chemin|Place|Lieu-dit)\s/);
-                          const prefix = typeMatch ? typeMatch[0] : '';
-                          setTicketData({ ...ticketData, voie: prefix + e.target.value });
-                        }}
+                        list="voies-list"
+                        placeholder="Sélectionner ou saisir une voie..."
+                        value={ticketData.voie}
+                        onChange={(e) => setTicketData({ ...ticketData, voie: e.target.value })}
+                        onFocus={(e) => e.target.select()}
+                        style={{ flex: 1, padding: '0.5rem', borderRadius: '4px', border: '1px solid #444', background: '#333', color: 'white' }}
                       />
                     </div>
                     <div className="print-only" style={{ flex: 1, paddingLeft: '5px' }}>
