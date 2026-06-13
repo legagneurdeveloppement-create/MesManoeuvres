@@ -174,7 +174,8 @@ function App() {
     return parsed.map(p => ({
       ...p,
       permisVL: p.permisVL !== undefined ? p.permisVL : false,
-      permisPL: p.permisPL !== undefined ? p.permisPL : false
+      permisPL: p.permisPL !== undefined ? p.permisPL : false,
+      telephone: p.telephone || ""
     })).sort((a, b) => (a.nom || "").localeCompare(b.nom || ""));
   });
 
@@ -794,6 +795,75 @@ function App() {
     setTicketData({ ...ticketData, personnel: newPersonnel });
   };
 
+  const triggerBipAlert = async () => {
+    const assignedPersonnel = ticketData.personnel.filter(p => p.nom && p.nom.trim() !== '');
+    
+    if (assignedPersonnel.length === 0) {
+      alert("Aucun pompier n'est affecté à cette intervention.");
+      return;
+    }
+
+    const alertTargets = [];
+    assignedPersonnel.forEach(ap => {
+      const dbPompier = pompiers.find(p => p.nom.trim() === ap.nom.trim());
+      if (dbPompier && dbPompier.telephone && dbPompier.telephone.trim() !== '') {
+        alertTargets.push({
+          nom: ap.nom,
+          telephone: dbPompier.telephone.trim(),
+          fonction: ap.fonction || '',
+          engin: ap.engin || ''
+        });
+      }
+    });
+
+    if (alertTargets.length === 0) {
+      alert("Aucun des pompiers affectés n'a de numéro de bip configuré dans les paramètres.");
+      return;
+    }
+
+    const motifText = selectedMotif ? selectedMotif.motif : 'Intervention';
+    const codeText = selectedMotif && selectedMotif.code ? ` (${selectedMotif.code})` : '';
+    const adresse = `${ticketData.commune || ''} ${ticketData.voie || ''}`.trim();
+    const obs = ticketData.observations ? ` - OBS: ${ticketData.observations.trim()}` : '';
+    
+    const message = `${motifText}${codeText} - ADRESSE: ${adresse || 'Non précisée'}${obs}`;
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const target of alertTargets) {
+      try {
+        const response = await fetch('http://localhost:3000/api/alert', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            phone: target.telephone,
+            message: `${target.engin.trim()} [${target.fonction}] - ${message}`,
+            priority: 'alarm'
+          })
+        });
+
+        if (response.ok) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      } catch (error) {
+        failCount++;
+      }
+    }
+
+    if (failCount === 0) {
+      alert(`📢 Alerte envoyée avec succès à ${successCount} bip(s) !`);
+    } else if (successCount > 0) {
+      alert(`📢 Alerte envoyée à ${successCount} bip(s), mais a échoué pour ${failCount} bip(s). Assurez-vous que le serveur ManoeuvreBip (http://localhost:3000) est bien lancé.`);
+    } else {
+      alert(`❌ Échec de l'envoi de l'alerte. Vérifiez que le serveur ManoeuvreBip est démarré sur http://localhost:3000`);
+    }
+  };
+
   const [voiesList, setVoiesList] = useState(default_voies);
 
   // Fetch streets dynamically when commune or voie changes
@@ -984,6 +1054,7 @@ function App() {
                   <th>GRADE</th>
                   <th>VL</th>
                   <th>PL</th>
+                  <th>N° TÉLÉPHONE (SMS BIP)</th>
                   <th></th>
                 </tr>
               </thead>
@@ -1050,6 +1121,19 @@ function App() {
                       </div>
                     </td>
                     <td>
+                      <input 
+                        type="text" 
+                        placeholder="ex: 0611223344"
+                        value={p.telephone || ''} 
+                        style={{ width: '130px', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '4px', padding: '0.25rem 0.5rem', color: 'white' }}
+                        onChange={(e) => {
+                          const newP = [...pompiers];
+                          newP[index].telephone = e.target.value.trim().replace(/\s+/g, '');
+                          setPompiers(newP);
+                        }} 
+                      />
+                    </td>
+                    <td>
                       <button className="btn-delete" onClick={() => {
                         if (confirm(`Supprimer ${p.nom || 'ce pompier'} ?`)) {
                           setPompiers(pompiers.filter((_, i) => i !== index));
@@ -1063,7 +1147,7 @@ function App() {
           </div>
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
             <button className="btn btn-print" onClick={() => {
-              setPompiers([...pompiers, { nom: '', matricule: '', fonction: '', grade: '', permisVL: false, permisPL: false }]);
+              setPompiers([...pompiers, { nom: '', matricule: '', fonction: '', grade: '', permisVL: false, permisPL: false, telephone: '' }]);
             }}>+ Ajouter un Pompier</button>
           </div>
 
@@ -1479,9 +1563,16 @@ function App() {
                   </table>
                 </div>
 
-                <div className="modal-actions no-print" style={{ marginTop: '2rem' }}>
+                <div className="modal-actions no-print" style={{ marginTop: '2rem', display: 'flex', gap: '1rem' }}>
                   <button className="btn btn-cancel" onClick={handleCloseModal}>
                     Fermer
+                  </button>
+                  <button 
+                    className="btn btn-confirm" 
+                    style={{ background: '#f97316', color: 'white' }} 
+                    onClick={triggerBipAlert}
+                  >
+                    📢 Déclencher les Bips
                   </button>
                   <button className="btn btn-print" onClick={handlePrint}>
                     🖨️ Imprimer

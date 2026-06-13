@@ -1,0 +1,173 @@
+[
+  {
+    "nom": "Alexia BAUDOT",
+    "matricule": "9433",
+    "fonction": "COND, ÉQUIPIER 1, ÉQUIPIER 2",
+    "grade": "Sapeur 2ème Classe",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": false
+  },
+  {
+    "nom": "Alexis MARTEL ",
+    "matricule": "9770",
+    "fonction": "CA, CE BAL, CE BAT, COND, EQ BAL, EQ BAT, ÉQUIPIER 1, ÉQUIPIER 2",
+    "grade": "Sergent",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": false
+  },
+  {
+    "nom": "Christian LUBREZ",
+    "matricule": "4048",
+    "fonction": "CA, CE BAL, CE BAT, COND, EQ BAL, EQ BAT, ÉQUIPIER 1, ÉQUIPIER 2",
+    "grade": "Adjudant",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": true
+  },
+  {
+    "nom": "Damien-junior AUGE",
+    "matricule": "9919",
+    "fonction": "COND, CE BAL, CE BAT, EQ BAL, EQ BAT, ÉQUIPIER 1, ÉQUIPIER 2",
+    "grade": "Caporal",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": false
+  },
+  {
+    "nom": "Emmanuel CAO THANH",
+    "matricule": "",
+    "fonction": "CA, CC, CE BAL, CE BAT, EQ BAT, ÉQUIPIER 2, EQ BAL, COS, COND, ÉQUIPIER 1",
+    "grade": "Lieutenant",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": false
+  },
+  {
+    "nom": "Florian GENERMONT",
+    "matricule": "10379",
+    "fonction": "ÉQUIPIER 1, ÉQUIPIER 2, COND",
+    "grade": "Sapeur 1ère Classe",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": true
+  },
+  {
+    "nom": "Guillaume BOURGEOIS",
+    "matricule": "9576",
+    "fonction": "CA, CE BAL, CE BAT, COND, EQ BAT, EQ BAL, ÉQUIPIER 1, ÉQUIPIER 2",
+    "grade": "Caporal",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": true
+  },
+  {
+    "nom": "Héloïse PITOIZEL ",
+    "matricule": "10617",
+    "fonction": "COND, ÉQUIPIER 1, ÉQUIPIER 2",
+    "grade": "Sapeur 1ère Classe",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": false
+  },
+  {
+    "nom": "Jenny THOMAS ",
+    "matricule": "10469",
+    "fonction": "ÉQUIPIER 1",
+    "grade": "",
+    "telephone": "",
+    "permisVL": false,
+    "permisPL": false
+  },
+  {
+    "nom": "Jessica TAINE",
+    "matricule": "9672",
+    "fonction": "ÉQUIPIER 1",
+    "grade": "Sapeur 2ème Classe",
+    "telephone": "",
+    "permisVL": false,
+    "permisPL": false
+  },
+  {
+    "nom": "Julien LEGAGNEUR",
+    "matricule": "8900",
+    "fonction": "CONDUCTEUR, CA, CE BAL, CE BAT, COND, EQ BAL, EQ BAT, ÉQUIPIER 1, ÉQUIPIER 2",
+    "grade": "Sergent",
+    "telephone": "0102030405",
+    "permisVL": true,
+    "permisPL": true
+  },
+  {
+    "nom": "Laurine PAGE ",
+    "matricule": "10714",
+    "fonction": "ÉQUIPIER 2, ÉQUIPIER 1, COND",
+    "grade": "Sapeur 2ème Classe",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": false
+  },
+  {
+    "nom": "Mehdi DOKIC",
+    "matricule": "10863",
+    "fonction": "COND, ÉQUIPIER 2, ÉQUIPIER 1",
+    "grade": "Sapeur 2ème Classe",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": false
+  },
+  {
+    "nom": "Mélanie HERMANS ",
+    "matricule": "10957",
+    "fonction": "COND, ÉQUIPIER 1, ÉQUIPIER 2",
+    "grade": "Sapeur 2ème Classe",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": false
+  },
+  {
+    "nom": "Nathan FERRER",
+    "matricule": "10888",
+    "fonction": "ÉQUIPIER 1, ÉQUIPIER 2, COND",
+    "grade": "Sapeur 1ère Classe",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": false
+  },
+  {
+    "nom": "Nolwenn CHAUCHE DE GESNAIS",
+    "matricule": "10817",
+    "fonction": "COND, ÉQUIPIER 1, ÉQUIPIER 2",
+    "grade": "Sapeur 2ème Classe",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": false
+  },
+  {
+    "nom": "Pauline CHAUCHE DE GESNAIS",
+    "matricule": "10818",
+    "fonction": "COND, ÉQUIPIER 1, ÉQUIPIER 2",
+    "grade": "Sapeur 2ème Classe",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": false
+  },
+  {
+    "nom": "Stéphanie POILLOT",
+    "matricule": "",
+    "fonction": "PERSONNEL MEDICALE, CA, COND",
+    "grade": "Infirmière chef",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": false
+  },
+  {
+    "nom": "Tristan DESSOLIN",
+    "matricule": "9988",
+    "fonction": "COND, ÉQUIPIER 2, ÉQUIPIER 1",
+    "grade": "Sapeur 1ère Classe",
+    "telephone": "",
+    "permisVL": true,
+    "permisPL": false
+  }
+]
