@@ -830,6 +830,14 @@ function App() {
     const phoneList = alertTargets.join(',');
     const smsUri = `sms:${phoneList}${separator}body=${encodeURIComponent(smsBody)}`;
     
+    try {
+      await navigator.clipboard.writeText(smsBody);
+      alert(`Message copié dans le presse-papier avec succès ! 📋\n\nSi votre application SMS ne s'ouvre pas automatiquement (fréquent sur PC), vous n'avez plus qu'à faire "Coller" (Ctrl+V) pour l'envoyer à vos pompiers.\n\nNuméros concernés : ${phoneList}`);
+    } catch (err) {
+      console.error('Erreur de copie', err);
+    }
+
+    // Tente d'ouvrir l'application SMS par défaut
     window.location.href = smsUri;
   };
 
