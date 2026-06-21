@@ -807,17 +807,12 @@ function App() {
     assignedPersonnel.forEach(ap => {
       const dbPompier = pompiers.find(p => p.nom.trim() === ap.nom.trim());
       if (dbPompier && dbPompier.telephone && dbPompier.telephone.trim() !== '') {
-        alertTargets.push({
-          nom: ap.nom,
-          telephone: dbPompier.telephone.trim(),
-          fonction: ap.fonction || '',
-          engin: ap.engin || ''
-        });
+        alertTargets.push(dbPompier.telephone.trim());
       }
     });
 
     if (alertTargets.length === 0) {
-      alert("Aucun des pompiers affectés n'a de numéro de bip configuré dans les paramètres.");
+      alert("Aucun des pompiers affectés n'a de numéro de téléphone configuré dans la gestion du personnel.");
       return;
     }
 
@@ -826,42 +821,16 @@ function App() {
     const adresse = `${ticketData.commune || ''} ${ticketData.voie || ''}`.trim();
     const obs = ticketData.observations ? ` - OBS: ${ticketData.observations.trim()}` : '';
     
-    const message = `${motifText}${codeText} - ADRESSE: ${adresse || 'Non précisée'}${obs}`;
-
-    let successCount = 0;
-    let failCount = 0;
-
-    for (const target of alertTargets) {
-      try {
-        const response = await fetch('http://localhost:3000/api/alert', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            phone: target.telephone,
-            message: `${target.engin.trim()} [${target.fonction}] - ${message}`,
-            priority: 'alarm'
-          })
-        });
-
-        if (response.ok) {
-          successCount++;
-        } else {
-          failCount++;
-        }
-      } catch (error) {
-        failCount++;
-      }
-    }
-
-    if (failCount === 0) {
-      alert(`📢 Alerte envoyée avec succès à ${successCount} bip(s) !`);
-    } else if (successCount > 0) {
-      alert(`📢 Alerte envoyée à ${successCount} bip(s), mais a échoué pour ${failCount} bip(s). Assurez-vous que le serveur ManoeuvreBip (http://localhost:3000) est bien lancé.`);
-    } else {
-      alert(`❌ Échec de l'envoi de l'alerte. Vérifiez que le serveur ManoeuvreBip est démarré sur http://localhost:3000`);
-    }
+    const msgContext = `${motifText}${codeText} - ADRESSE: ${adresse || 'Non précisée'}${obs}`;
+    const vercelLink = `https://manoeuvre-bip.vercel.app/?msg=${encodeURIComponent(msgContext)}`;
+    const smsBody = `ALERTE MANOEUVRE !\n\n${msgContext}\n\nCliquez ici pour ouvrir le bip :\n${vercelLink}`;
+    
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const separator = isIOS ? '&' : '?';
+    const phoneList = alertTargets.join(',');
+    const smsUri = `sms:${phoneList}${separator}body=${encodeURIComponent(smsBody)}`;
+    
+    window.location.href = smsUri;
   };
 
   const [voiesList, setVoiesList] = useState(default_voies);
