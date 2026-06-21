@@ -821,24 +821,31 @@ function App() {
     const adresse = `${ticketData.commune || ''} ${ticketData.voie || ''}`.trim();
     const obs = ticketData.observations ? ` - OBS: ${ticketData.observations.trim()}` : '';
     
-    const msgContext = `${motifText}${codeText} - ADRESSE: ${adresse || 'Non précisée'}${obs}`;
-    const vercelLink = `https://manoeuvre-bip.vercel.app/?msg=${encodeURIComponent(msgContext)}`;
-    const smsBody = `ALERTE MANOEUVRE !\n\n${msgContext}\n\nCliquez ici pour ouvrir le bip :\n${vercelLink}`;
-    
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    const separator = isIOS ? '&' : '?';
-    const phoneList = alertTargets.join(',');
-    const smsUri = `sms:${phoneList}${separator}body=${encodeURIComponent(smsBody)}`;
-    
-    try {
-      await navigator.clipboard.writeText(smsBody);
-      alert(`Message copié dans le presse-papier avec succès ! 📋\n\nSi votre application SMS ne s'ouvre pas automatiquement (fréquent sur PC), vous n'avez plus qu'à faire "Coller" (Ctrl+V) pour l'envoyer à vos pompiers.\n\nNuméros concernés : ${phoneList}`);
-    } catch (err) {
-      console.error('Erreur de copie', err);
-    }
+    const message = `${motifText}${codeText} - ADRESSE: ${adresse || 'Non précisée'}${obs}`;
 
-    // Tente d'ouvrir l'application SMS par défaut
-    window.location.href = smsUri;
+    try {
+      const resp = await fetch('https://manoeuvre-bip.vercel.app/api/trigger-push', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phones: alertTargets,
+          message,
+          title: '🚨 ALERTE MANOEUVRE !'
+        })
+      });
+
+      const result = await resp.json();
+
+      if (result.sent > 0 && result.failed === 0) {
+        alert(`✅ Bip déclenché avec succès pour ${result.sent} pompier(s) !`);
+      } else if (result.sent > 0) {
+        alert(`⚠️ Bip déclenché pour ${result.sent} pompier(s).\n${result.failed} pompier(s) n'ont pas encore activé leur bip sur leur téléphone.`);
+      } else {
+        alert(`❌ Aucun bip n'a pu être déclenché.\n\nVérifiez que les pompiers ont bien ouvert ManoeuvreBip sur leur téléphone et cliqué sur "Activer le Bip".\n\nErreurs : ${result.errors?.join(', ') || 'Inconnue'}`);
+      }
+    } catch (err) {
+      alert(`❌ Impossible de joindre le serveur ManoeuvreBip.\n\nVérifiez votre connexion internet.`);
+    }
   };
 
   const [voiesList, setVoiesList] = useState(default_voies);
