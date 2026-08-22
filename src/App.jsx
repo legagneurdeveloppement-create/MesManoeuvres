@@ -1084,125 +1084,122 @@ function sortGrades(list) {
             </a>
           </div>
 
-          <div className="table-responsive">
-            <table className="personnel-table settings-table">
-              <thead>
-                <tr>
-                  <th>NOM COMPLET</th>
-                  <th>MATRICULE</th>
-                  <th>FONCTIONS (ex: CA, COND)</th>
-                  <th>GRADE</th>
-                  <th>VL</th>
-                  <th>PL</th>
-                  <th>N° TÉLÉPHONE (SMS BIP)</th>
-                  <th>📱 BIP 1-CLIC</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {pompiers.map((p, index) => (
-                  <tr key={index}>
-                    <td><input type="text" value={p.nom} 
-                      onChange={(e) => {
-                        const newP = [...pompiers];
-                        newP[index].nom = e.target.value;
-                        setPompiers(newP);
-                      }}
-                      onBlur={() => {
-                        const sorted = [...pompiers].sort((a, b) => (a.nom || "").localeCompare(b.nom || ""));
-                        setPompiers(sorted);
-                      }} 
-                    /></td>
-                    <td><input type="text" value={p.matricule} onChange={(e) => {
+          <div className="mobile-card-list">
+            {pompiers.map((p, index) => (
+              <div key={index} className="mobile-card-item pompier-card">
+                {/* Ligne 1 : Nom + bouton supprimer */}
+                <div className="mobile-card-row">
+                  <input
+                    type="text"
+                    className="mobile-card-input"
+                    placeholder="Nom complet"
+                    value={p.nom}
+                    onChange={(e) => {
+                      const newP = [...pompiers];
+                      newP[index].nom = e.target.value;
+                      setPompiers(newP);
+                    }}
+                    onBlur={() => {
+                      const sorted = [...pompiers].sort((a, b) => (a.nom || "").localeCompare(b.nom || ""));
+                      setPompiers(sorted);
+                    }}
+                  />
+                  <button className="btn-delete" style={{ flexShrink: 0 }} onClick={() => {
+                    if (confirm(`Supprimer ${p.nom || 'ce pompier'} ?`)) {
+                      setPompiers(pompiers.filter((_, i) => i !== index));
+                    }
+                  }}>×</button>
+                </div>
+
+                {/* Ligne 2 : Matricule + Grade */}
+                <div className="mobile-card-row">
+                  <span className="mobile-card-label">Mat.</span>
+                  <input
+                    type="text"
+                    className="mobile-card-input"
+                    placeholder="Matricule"
+                    style={{ maxWidth: '100px' }}
+                    value={p.matricule}
+                    onChange={(e) => {
                       const newP = [...pompiers];
                       newP[index].matricule = e.target.value;
                       setPompiers(newP);
-                    }} /></td>
-                    <td>
-                      <div className="badges-grid">
-                        {sortFonctions(availableFonctions).map((f, fIdx) => (
-                          <span 
-                            key={fIdx} 
-                            className={`badge-item ${p.fonction && p.fonction.split(',').map(s => s.trim()).includes(f) ? 'active' : ''}`}
-                            onClick={() => toggleFonction(index, f)}
-                          >
-                            {f}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td><input type="text" list="grades-list" value={p.grade} onChange={(e) => {
+                    }}
+                  />
+                  <span className="mobile-card-label">Grade</span>
+                  <input
+                    type="text"
+                    list="grades-list"
+                    className="mobile-card-input"
+                    placeholder="Grade"
+                    value={p.grade}
+                    onChange={(e) => {
                       const newP = [...pompiers];
                       newP[index].grade = e.target.value;
                       setPompiers(newP);
-                    }} /></td>
-                    <td style={{ textAlign: 'center' }}>
-                      <div 
-                        className={`permit-badge ${p.permisVL ? 'active-vl' : ''}`}
-                        onClick={() => {
-                          const newP = [...pompiers];
-                          newP[index].permisVL = !newP[index].permisVL;
-                          setPompiers(newP);
-                        }}
-                      >
-                        VL
-                      </div>
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <div 
-                        className={`permit-badge ${p.permisPL ? 'active-pl' : ''}`}
-                        onClick={() => {
-                          const newP = [...pompiers];
-                          newP[index].permisPL = !newP[index].permisPL;
-                          setPompiers(newP);
-                        }}
-                      >
-                        PL
-                      </div>
-                    </td>
-                    <td>
-                      <input 
-                        type="text" 
-                        placeholder="ex: 0611223344"
-                        value={p.telephone || ''} 
-                        style={{ width: '130px', background: 'transparent', border: '1px solid var(--border-color)', borderRadius: '4px', padding: '0.25rem 0.5rem', color: 'white' }}
-                        onChange={(e) => {
-                          const newP = [...pompiers];
-                          newP[index].telephone = e.target.value.trim().replace(/\s+/g, '');
-                          setPompiers(newP);
-                        }} 
-                      />
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      {p.telephone ? (
-                        <button 
-                          className="btn"
-                          style={{ background: 'linear-gradient(135deg, #0984e3, #6c5ce7)', color: 'white', border: 'none', borderRadius: '4px', padding: '0.25rem 0.5rem', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                          onClick={() => setQrModalPompier(p)}
-                          title="Générer QR Code et Lien 1-Clic"
-                        >
-                          📱 QR Code
-                        </button>
-                      ) : (
-                        <span style={{ fontSize: '11px', color: '#666' }}>Entrer tél.</span>
-                      )}
-                    </td>
-                    <td>
-                      <button className="btn-delete" onClick={() => {
-                        if (confirm(`Supprimer ${p.nom || 'ce pompier'} ?`)) {
-                          setPompiers(pompiers.filter((_, i) => i !== index));
-                        }
-                      }}>×</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    }}
+                  />
+                </div>
+
+                {/* Ligne 3 : Permis VL/PL + Téléphone */}
+                <div className="mobile-card-row">
+                  <div
+                    className={`permit-badge ${p.permisVL ? 'active-vl' : ''}`}
+                    onClick={() => {
+                      const newP = [...pompiers];
+                      newP[index].permisVL = !newP[index].permisVL;
+                      setPompiers(newP);
+                    }}
+                  >VL</div>
+                  <div
+                    className={`permit-badge ${p.permisPL ? 'active-pl' : ''}`}
+                    onClick={() => {
+                      const newP = [...pompiers];
+                      newP[index].permisPL = !newP[index].permisPL;
+                      setPompiers(newP);
+                    }}
+                  >PL</div>
+                  <input
+                    type="text"
+                    className="mobile-card-input"
+                    placeholder="📞 Téléphone BIP"
+                    value={p.telephone || ''}
+                    onChange={(e) => {
+                      const newP = [...pompiers];
+                      newP[index].telephone = e.target.value.trim().replace(/\s+/g, '');
+                      setPompiers(newP);
+                    }}
+                  />
+                  {p.telephone ? (
+                    <button
+                      className="btn"
+                      style={{ background: 'linear-gradient(135deg, #0984e3, #6c5ce7)', color: 'white', border: 'none', borderRadius: '4px', padding: '4px 8px', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', flexShrink: 0, whiteSpace: 'nowrap' }}
+                      onClick={() => setQrModalPompier(p)}
+                    >📱 QR</button>
+                  ) : null}
+                </div>
+
+                {/* Ligne 4 : Fonctions */}
+                <div className="mobile-card-label">Fonctions :</div>
+                <div className="badges-grid">
+                  {sortFonctions(availableFonctions).map((f, fIdx) => (
+                    <span
+                      key={fIdx}
+                      className={`badge-item ${p.fonction && p.fonction.split(',').map(s => s.trim()).includes(f) ? 'active' : ''}`}
+                      onClick={() => toggleFonction(index, f)}
+                    >
+                      {f}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
             <button className="btn btn-print" onClick={() => {
               setPompiers([...pompiers, { nom: '', matricule: '', fonction: '', grade: '', permisVL: false, permisPL: false, telephone: '' }]);
             }}>+ Ajouter un Pompier</button>
+
           </div>
 
           <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', margin: '3rem 0 2rem 0' }}>Gestion des Véhicules</h2>
