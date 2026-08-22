@@ -244,19 +244,50 @@ function App() {
     ];
   });
 
+const FONCTIONS_ORDER = ["COS", "CA", "CC", "CE BAT", "EQ BAT", "CE BAL", "EQ BAL", "COND", "EQ 1", "EQ 2", "EQ 3", "EQ 4", "INF", "MED"];
+const GRADES_ORDER = ["SAPEUR", "SAPEUR 1ERE CLASSE", "CAPORAL", "CAPORAL-CHEF", "SERGENT", "SERGENT-CHEF", "ADJUDANT", "ADJUDANT-CHEF", "LIEUTENANT", "CAPITAINE", "COMMANDANT", "LIEUTENANT-COLONEL", "COLONEL", "INFIRMIER", "MEDECIN"];
+
+function sortFonctions(list) {
+  if (!Array.isArray(list)) return [];
+  return [...list].sort((a, b) => {
+    const idxA = FONCTIONS_ORDER.indexOf((a || '').trim().toUpperCase());
+    const idxB = FONCTIONS_ORDER.indexOf((b || '').trim().toUpperCase());
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+    return (a || '').localeCompare(b || '');
+  });
+}
+
+function sortGrades(list) {
+  if (!Array.isArray(list)) return [];
+  return [...list].sort((a, b) => {
+    const nameA = (typeof a === 'string' ? a : a.nom || '').trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const nameB = (typeof b === 'string' ? b : b.nom || '').trim().toUpperCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const idxA = GRADES_ORDER.findIndex(g => nameA.includes(g));
+    const idxB = GRADES_ORDER.findIndex(g => nameB.includes(g));
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB;
+    if (idxA !== -1) return -1;
+    if (idxB !== -1) return 1;
+    return nameA.localeCompare(nameB);
+  });
+}
+
   // Settings state for functions and grades
   const [availableFonctions, setAvailableFonctions] = useState(() => {
     const saved = localStorage.getItem('availableFonctions');
-    return saved ? JSON.parse(saved) : ["CA", "CC", "CE BAT", "EQ BAT", "CE BAL", "EQ BAL", "COND", "COS", "EQ 1", "EQ 2", "EQ 3", "EQ 4", "INF", "MED"];
+    const parsed = saved ? JSON.parse(saved) : ["CA", "CC", "CE BAT", "EQ BAT", "CE BAL", "EQ BAL", "COND", "COS", "EQ 1", "EQ 2", "EQ 3", "EQ 4", "INF", "MED"];
+    return sortFonctions(parsed);
   });
 
   const [availableGrades, setAvailableGrades] = useState(() => {
     const saved = localStorage.getItem('availableGrades');
     const parsed = saved ? JSON.parse(saved) : ["Sapeur", "Sapeur 1ère Classe", "Caporal", "Caporal-Chef", "Sergent", "Sergent-Chef", "Adjudant", "Adjudant-Chef", "Lieutenant", "Capitaine", "Commandant", "Lieutenant-Colonel", "Colonel", "Infirmier", "Médecin"];
-    return parsed.map(g => {
+    const mapped = parsed.map(g => {
       if (typeof g === 'string') return { nom: g, fonctions: [] };
       return { ...g, fonctions: g.fonctions || [] };
     });
+    return sortGrades(mapped);
   });
 
   // Refs for auto-focus
@@ -285,7 +316,7 @@ function App() {
     const unique = [...new Set([...missing, ...currentClean])].filter(f => f.trim() !== "");
     
     if (unique.length !== availableFonctions.length) {
-      setAvailableFonctions(unique.sort());
+      setAvailableFonctions(sortFonctions(unique));
     }
   }, []);
 
@@ -911,10 +942,10 @@ function App() {
         {pompiers.filter(p => p.permisPL).sort((a, b) => a.nom.localeCompare(b.nom)).map((p, i) => <option key={i} value={p.nom} />)}
       </datalist>
       <datalist id="fonctions-list">
-        {availableFonctions.slice().sort().map((f, i) => <option key={i} value={f} />)}
+        {sortFonctions(availableFonctions).map((f, i) => <option key={i} value={f} />)}
       </datalist>
       <datalist id="grades-list">
-        {availableGrades.slice().sort((a, b) => a.nom.localeCompare(b.nom)).map((g, i) => <option key={i} value={typeof g === 'string' ? g : g.nom} />)}
+        {sortGrades(availableGrades).map((g, i) => <option key={i} value={typeof g === 'string' ? g : g.nom} />)}
       </datalist>
       <datalist id="vehicules-list">
         {customVehicles.map((v, i) => <option key={i} value={v.nom} />)}
@@ -1089,7 +1120,7 @@ function App() {
                     }} /></td>
                     <td>
                       <div className="badges-grid">
-                        {availableFonctions.map((f, fIdx) => (
+                        {sortFonctions(availableFonctions).map((f, fIdx) => (
                           <span 
                             key={fIdx} 
                             className={`badge-item ${p.fonction && p.fonction.split(',').map(s => s.trim()).includes(f) ? 'active' : ''}`}
@@ -1099,7 +1130,6 @@ function App() {
                           </span>
                         ))}
                       </div>
-                      {/* Input removed as per user request (redundant with badges) */}
                     </td>
                     <td><input type="text" list="grades-list" value={p.grade} onChange={(e) => {
                       const newP = [...pompiers];
@@ -1243,7 +1273,7 @@ function App() {
                     </tr>
                   </thead>
                   <tbody>
-                    {availableFonctions.map((f, index) => (
+                    {sortFonctions(availableFonctions).map((f, index) => (
                       <tr key={index}>
                         <td><input type="text" value={f} onChange={(e) => {
                           const newF = [...availableFonctions];
@@ -1277,7 +1307,7 @@ function App() {
                     </tr>
                   </thead>
                   <tbody>
-                    {availableGrades.map((g, index) => (
+                    {sortGrades(availableGrades).map((g, index) => (
                       <tr key={index}>
                         <td><input type="text" value={g.nom} onChange={(e) => {
                           const newG = [...availableGrades];
@@ -1286,7 +1316,7 @@ function App() {
                         }} /></td>
                         <td>
                           <div className="badges-grid">
-                            {availableFonctions.map((f, fIdx) => (
+                            {sortFonctions(availableFonctions).map((f, fIdx) => (
                               <span 
                                 key={fIdx} 
                                 className={`badge-item ${g.fonctions && g.fonctions.includes(f) ? 'active' : ''}`}

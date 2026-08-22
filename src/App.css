@@ -211,13 +211,13 @@ body {
 .badges-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  max-width: 500px;
+  gap: 5px;
+  max-width: 100%;
 }
 
 .badge-item {
-  font-size: 0.7rem;
-  padding: 2px 6px;
+  font-size: 0.72rem;
+  padding: 3px 7px;
   border-radius: 4px;
   background: var(--surface-hover);
   color: var(--text-secondary);
@@ -225,6 +225,8 @@ body {
   cursor: pointer;
   transition: all 0.2s;
   user-select: none;
+  white-space: nowrap !important;
+  display: inline-block;
 }
 
 .badge-item:hover {
@@ -739,6 +741,18 @@ input::-webkit-calendar-picker-indicator {
     justify-content: center !important;
     padding: 12px !important;
     font-size: 15px !important;
+  }
+
+  /* Tables des paramètres (Grades et Fonctions) scrollables proprement */
+  .settings-container .table-responsive {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  .settings-table {
+    min-width: 680px !important;
   }
 }
 
