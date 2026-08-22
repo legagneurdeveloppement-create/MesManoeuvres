@@ -1547,7 +1547,7 @@ function App() {
                   </table>
                 </div>
 
-                <div className="modal-actions no-print" style={{ marginTop: '2rem', display: 'flex', gap: '1rem' }}>
+                <div className="modal-actions no-print" style={{ marginTop: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
                   <button className="btn btn-cancel" onClick={handleCloseModal}>
                     Fermer
                   </button>
@@ -1558,6 +1558,15 @@ function App() {
                   >
                     📢 Déclencher les Bips
                   </button>
+                  <a 
+                    href="https://manoeuvrebip.vercel.app/ManoeuvreBip.apk" 
+                    download="ManoeuvreBip.apk"
+                    className="btn" 
+                    style={{ background: '#10b981', color: 'white', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 'bold' }}
+                    title="Télécharger l'application native Android pour réveil automatique"
+                  >
+                    📲 App Bip (.apk)
+                  </a>
                   <button className="btn btn-print" onClick={handlePrint}>
                     🖨️ Imprimer
                   </button>

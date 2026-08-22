@@ -72,6 +72,15 @@
     "permisPL": false
   },
   {
+    "nom": "Jean Luc LEGAGNEUR test",
+    "matricule": "4714",
+    "fonction": "CA, CE BAL, CE BAT, COND, EQ BAL, EQ BAT, ÉQUIPIER 1, ÉQUIPIER 2",
+    "grade": "Sergent-Chef",
+    "permisVL": true,
+    "permisPL": true,
+    "telephone": "0687884265"
+  },
+  {
     "nom": "Jenny THOMAS ",
     "matricule": "10469",
     "fonction": "ÉQUIPIER 1",
@@ -94,7 +103,7 @@
     "matricule": "8900",
     "fonction": "CONDUCTEUR, CA, CE BAL, CE BAT, COND, EQ BAL, EQ BAT, ÉQUIPIER 1, ÉQUIPIER 2",
     "grade": "Sergent",
-    "telephone": "0102030405",
+    "telephone": "",
     "permisVL": true,
     "permisPL": true
   },
