@@ -168,6 +168,7 @@ function App() {
   });
 
   // Settings state for firemen
+  const [qrModalPompier, setQrModalPompier] = useState(null);
   const [pompiers, setPompiers] = useState(() => {
     const saved = localStorage.getItem('pompiers');
     const parsed = saved ? JSON.parse(saved) : [];
@@ -1039,6 +1040,7 @@ function App() {
                   <th>VL</th>
                   <th>PL</th>
                   <th>N° TÉLÉPHONE (SMS BIP)</th>
+                  <th>📱 BIP 1-CLIC</th>
                   <th></th>
                 </tr>
               </thead>
@@ -1116,6 +1118,20 @@ function App() {
                           setPompiers(newP);
                         }} 
                       />
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      {p.telephone ? (
+                        <button 
+                          className="btn"
+                          style={{ background: 'linear-gradient(135deg, #0984e3, #6c5ce7)', color: 'white', border: 'none', borderRadius: '4px', padding: '0.25rem 0.5rem', fontSize: '11px', fontWeight: 'bold', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+                          onClick={() => setQrModalPompier(p)}
+                          title="Générer QR Code et Lien 1-Clic"
+                        >
+                          📱 QR Code
+                        </button>
+                      ) : (
+                        <span style={{ fontSize: '11px', color: '#666' }}>Entrer tél.</span>
+                      )}
                     </td>
                     <td>
                       <button className="btn-delete" onClick={() => {
@@ -1572,6 +1588,46 @@ function App() {
                   </button>
                 </div>
             </>
+          </div>
+        </div>
+      )}
+
+      {qrModalPompier && (
+        <div className="modal-overlay" onClick={() => setQrModalPompier(null)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, backdropFilter: 'blur(4px)' }}>
+          <div className="modal-content" onClick={e => e.stopPropagation()} style={{ background: '#1e293b', padding: '2rem', borderRadius: '20px', maxWidth: '420px', width: '90%', textAlign: 'center', color: 'white', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.6)', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <h2 style={{ color: '#38bdf8', marginTop: 0, fontSize: '20px', fontWeight: 'bold' }}>📱 Bip 1-Clic Sapeur-Pompier</h2>
+            <p style={{ fontWeight: 'bold', fontSize: '18px', margin: '10px 0 2px 0' }}>{qrModalPompier.nom}</p>
+            <p style={{ color: '#94a3b8', margin: '0 0 15px 0', fontSize: '14px' }}>N° Téléphone : {qrModalPompier.telephone}</p>
+            
+            <div style={{ background: 'white', padding: '16px', borderRadius: '16px', display: 'inline-block', margin: '10px 0', boxShadow: '0 8px 20px rgba(0,0,0,0.3)' }}>
+              <img 
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(`https://manoeuvre-bip.vercel.app/?phone=${qrModalPompier.telephone}&name=${encodeURIComponent(qrModalPompier.nom)}&auto=1`)}`} 
+                alt="QR Code Bip Pompier"
+                style={{ width: '220px', height: '220px', display: 'block' }}
+              />
+            </div>
+            <p style={{ fontSize: '12px', color: '#94a3b8', margin: '10px 0 20px 0' }}>Faites scanner ce QR Code avec l'appareil photo du téléphone de {qrModalPompier.nom}.</p>
+            
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button 
+                className="btn" 
+                style={{ background: '#8b5cf6', color: 'white', fontWeight: 'bold', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer', border: 'none' }}
+                onClick={() => {
+                  const url = `https://manoeuvre-bip.vercel.app/?phone=${qrModalPompier.telephone}&name=${encodeURIComponent(qrModalPompier.nom)}&auto=1`;
+                  navigator.clipboard.writeText(url);
+                  alert(`✅ Lien 1-Clic copié pour ${qrModalPompier.nom} !\n\nVous pouvez le coller directement dans WhatsApp ou par SMS.`);
+                }}
+              >
+                📋 Copier Lien 1-Clic
+              </button>
+              <button 
+                className="btn"
+                style={{ background: '#475569', color: 'white', padding: '10px 16px', borderRadius: '8px', cursor: 'pointer', border: 'none' }} 
+                onClick={() => setQrModalPompier(null)}
+              >
+                Fermer
+              </button>
+            </div>
           </div>
         </div>
       )}
