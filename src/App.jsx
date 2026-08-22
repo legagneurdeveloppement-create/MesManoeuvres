@@ -1261,7 +1261,7 @@ function sortGrades(list) {
             }}>+ Ajouter un Engin</button>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginTop: '3rem' }}>
+          <div className="settings-two-columns" style={{ marginTop: '3rem' }}>
             <div>
               <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', marginBottom: '2rem' }}>Liste des Fonctions</h2>
               <div className="table-responsive">

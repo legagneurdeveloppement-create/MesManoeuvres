@@ -671,6 +671,19 @@ input::-webkit-calendar-picker-indicator {
 /* ==========================================================================
    MOBILE & SMARTPHONE RESPONSIVE OPTIMIZATIONS
    ========================================================================== */
+.settings-two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+@media screen and (max-width: 900px) {
+  .settings-two-columns {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+  }
+}
+
 @media screen and (max-width: 768px) {
   .modal-overlay {
     padding: 0.25rem !important;
@@ -714,7 +727,7 @@ input::-webkit-calendar-picker-indicator {
   }
 
   .personnel-table {
-    min-width: 580px !important; /* Force la largeur minimale scrollable pour éviter toute troncature */
+    min-width: 580px !important;
   }
 
   .personnel-table th, .personnel-table td {
@@ -752,7 +765,7 @@ input::-webkit-calendar-picker-indicator {
   }
 
   .settings-table {
-    min-width: 680px !important;
+    min-width: 100% !important;
   }
 }
 
