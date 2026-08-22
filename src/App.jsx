@@ -1559,7 +1559,7 @@ function App() {
                     📢 Déclencher les Bips
                   </button>
                   <a 
-                    href="https://manoeuvrebip.vercel.app/ManoeuvreBip.apk" 
+                    href="/ManoeuvreBip.apk" 
                     download="ManoeuvreBip.apk"
                     className="btn" 
                     style={{ background: '#10b981', color: 'white', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 'bold' }}
