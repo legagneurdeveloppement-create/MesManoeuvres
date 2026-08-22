@@ -1014,6 +1014,21 @@ function App() {
             <li><strong>Règles Médicales :</strong> Seul un Infirmier ou une Infirmière peut monter dans un véhicule "INF" ou prendre un poste "INF". Idem pour les Médecins.</li>
             <li><strong>Compatibilité :</strong> Lors du remplissage aléatoire, si aucune personne n'a les compétences requises pour un poste (ex: aucun conducteur PL disponible), la case restera vide pour vous alerter.</li>
           </ul>
+
+          <h2 className="section-title">6. Téléalerte Bip Sapeurs-Pompiers & Bip 1-Clic / QR Code</h2>
+          <p>L'application est directement interconnectée au système de téléalerte <strong>ManoeuvreBip</strong> pour faire sonner les bips des pompiers lors des départs.</p>
+          <ul style={{ paddingLeft: '1.5rem', marginBottom: '1rem' }}>
+            <li><strong>Déclencher les Bips :</strong> Lors de l'armement d'un départ, cliquez sur le bouton orange <strong>"📢 Déclencher les Bips"</strong>. Les bips et smartphones des pompiers affectés sonneront immédiatement.</li>
+            <li><strong>Application Android Native (.apk) :</strong> Cliquez sur le bouton vert <strong>"📲 App Bip (.apk)"</strong> pour télécharger l'application Android native réveil d'écran automatique.</li>
+            <li><strong>Activation 1-Clic & QR Code pour le personnel (Recommandé) :</strong>
+              <ul style={{ paddingLeft: '1.2rem', marginTop: '0.4rem' }}>
+                <li>Allez dans <strong>"⚙️ Paramètres Personnel"</strong>.</li>
+                <li>En face de chaque pompier, cliquez sur le bouton bleu <strong>"📱 QR Code"</strong>.</li>
+                <li>Faites scanner le QR Code à l'écran avec l'appareil photo du smartphone du pompier <em>OU</em> cliquez sur <strong>"📋 Copier Lien 1-Clic"</strong> pour lui envoyer son accès direct par WhatsApp / SMS.</li>
+                <li>Sur son écran, le pompier n'a qu'à toucher le bouton <strong>"🔔 Activer Mon Bip"</strong> : son téléphone est pré-configuré et activé en 3 secondes sans aucune saisie !</li>
+              </ul>
+            </li>
+          </ul>
         </div>
       ) : showSettings ? (
         <div className="settings-container no-print">
