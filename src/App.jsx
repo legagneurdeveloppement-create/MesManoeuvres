@@ -1206,54 +1206,46 @@ function sortGrades(list) {
           </div>
 
           <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', margin: '3rem 0 2rem 0' }}>Gestion des Véhicules</h2>
-          <div className="table-responsive">
-            <table className="personnel-table settings-table">
-              <thead>
-                <tr>
-                  <th>NOM DE L'ENGIN</th>
-                  <th>NB PERS.</th>
-                  <th>PERMIS REQUIS</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {customVehicles.map((v, index) => (
-                  <tr key={index}>
-                    <td><input type="text" value={v.nom} onChange={(e) => {
+          <div className="mobile-card-list">
+            {customVehicles.map((v, index) => (
+              <div key={index} className="mobile-card-item">
+                <div className="mobile-card-row">
+                  <span className="mobile-card-label">Engin</span>
+                  <input type="text" className="mobile-card-input" value={v.nom} placeholder="Nom de l'engin" onChange={(e) => {
+                    const newV = [...customVehicles];
+                    newV[index].nom = e.target.value.toUpperCase();
+                    setCustomVehicles(newV);
+                  }} />
+                </div>
+                <div className="mobile-card-row">
+                  <span className="mobile-card-label">Pers.</span>
+                  <input type="number" min="1" max="10" className="mobile-card-input" style={{ width: '80px' }} value={v.personnel} onChange={(e) => {
+                    const newV = [...customVehicles];
+                    newV[index].personnel = e.target.value;
+                    setCustomVehicles(newV);
+                  }} />
+                  <span className="mobile-card-label" style={{ marginLeft: '1rem' }}>Permis</span>
+                  <select
+                    value={v.permis || 'VL'}
+                    className="mobile-card-input"
+                    style={{ width: '80px', background: 'var(--surface-color)', color: 'white', border: '1px solid var(--border-color)', borderRadius: '4px', padding: '4px' }}
+                    onChange={(e) => {
                       const newV = [...customVehicles];
-                      newV[index].nom = e.target.value.toUpperCase();
+                      newV[index].permis = e.target.value;
                       setCustomVehicles(newV);
-                    }} /></td>
-                    <td><input type="number" min="1" max="10" value={v.personnel} style={{ width: '60px' }} onChange={(e) => {
-                      const newV = [...customVehicles];
-                      newV[index].personnel = e.target.value;
-                      setCustomVehicles(newV);
-                    }} /></td>
-                    <td>
-                      <select 
-                        value={v.permis || 'VL'} 
-                        style={{ background: 'transparent', color: 'white', border: '1px solid var(--border-color)', borderRadius: '4px' }}
-                        onChange={(e) => {
-                          const newV = [...customVehicles];
-                          newV[index].permis = e.target.value;
-                          setCustomVehicles(newV);
-                        }}
-                      >
-                        <option value="VL" style={{ color: 'black' }}>VL</option>
-                        <option value="PL" style={{ color: 'black' }}>PL</option>
-                      </select>
-                    </td>
-                    <td>
-                      <button className="btn-delete" onClick={() => {
-                        if (confirm(`Supprimer l'engin ${v.nom} ?`)) {
-                          setCustomVehicles(customVehicles.filter((_, i) => i !== index));
-                        }
-                      }}>×</button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    }}
+                  >
+                    <option value="VL" style={{ color: 'black' }}>VL</option>
+                    <option value="PL" style={{ color: 'black' }}>PL</option>
+                  </select>
+                  <button className="btn-delete" style={{ marginLeft: 'auto' }} onClick={() => {
+                    if (confirm(`Supprimer l'engin ${v.nom} ?`)) {
+                      setCustomVehicles(customVehicles.filter((_, i) => i !== index));
+                    }
+                  }}>×</button>
+                </div>
+              </div>
+            ))}
           </div>
           <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
             <button className="btn btn-print" onClick={() => {
@@ -1263,32 +1255,22 @@ function sortGrades(list) {
 
           <div className="settings-two-columns" style={{ marginTop: '3rem' }}>
             <div>
-              <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', marginBottom: '2rem' }}>Liste des Fonctions</h2>
-              <div className="table-responsive">
-                <table className="personnel-table settings-table">
-                  <thead>
-                    <tr>
-                      <th>NOM DE LA FONCTION</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sortFonctions(availableFonctions).map((f, index) => (
-                      <tr key={index}>
-                        <td><input type="text" value={f} onChange={(e) => {
-                          const newF = [...availableFonctions];
-                          newF[index] = e.target.value.toUpperCase();
-                          setAvailableFonctions(newF);
-                        }} /></td>
-                        <td>
-                          <button className="btn-delete" onClick={() => {
-                            setAvailableFonctions(availableFonctions.filter((_, i) => i !== index));
-                          }}>×</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', marginBottom: '1rem' }}>Liste des Fonctions</h2>
+              <div className="mobile-card-list">
+                {sortFonctions(availableFonctions).map((f, index) => (
+                  <div key={index} className="mobile-card-item">
+                    <div className="mobile-card-row">
+                      <input type="text" className="mobile-card-input" value={f} placeholder="Nom de la fonction" onChange={(e) => {
+                        const newF = [...availableFonctions];
+                        newF[index] = e.target.value.toUpperCase();
+                        setAvailableFonctions(newF);
+                      }} />
+                      <button className="btn-delete" style={{ marginLeft: 'auto', flexShrink: 0 }} onClick={() => {
+                        setAvailableFonctions(availableFonctions.filter((_, i) => i !== index));
+                      }}>×</button>
+                    </div>
+                  </div>
+                ))}
               </div>
               <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
                 <button className="btn btn-print" onClick={() => setAvailableFonctions([...availableFonctions, ""])}>+ Ajouter une Fonction</button>
@@ -1296,46 +1278,34 @@ function sortGrades(list) {
             </div>
 
             <div>
-              <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', marginBottom: '2rem' }}>Liste des Grades</h2>
-              <div className="table-responsive">
-                <table className="personnel-table settings-table">
-                  <thead>
-                    <tr>
-                      <th>NOM DU GRADE</th>
-                      <th>FONCTIONS AUTORISÉES</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sortGrades(availableGrades).map((g, index) => (
-                      <tr key={index}>
-                        <td><input type="text" value={g.nom} onChange={(e) => {
-                          const newG = [...availableGrades];
-                          newG[index].nom = e.target.value;
-                          setAvailableGrades(newG);
-                        }} /></td>
-                        <td>
-                          <div className="badges-grid">
-                            {sortFonctions(availableFonctions).map((f, fIdx) => (
-                              <span 
-                                key={fIdx} 
-                                className={`badge-item ${g.fonctions && g.fonctions.includes(f) ? 'active' : ''}`}
-                                onClick={() => toggleGradeFonction(index, f)}
-                              >
-                                {f}
-                              </span>
-                            ))}
-                          </div>
-                        </td>
-                        <td>
-                          <button className="btn-delete" onClick={() => {
-                            setAvailableGrades(availableGrades.filter((_, i) => i !== index));
-                          }}>×</button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', marginBottom: '1rem' }}>Liste des Grades</h2>
+              <div className="mobile-card-list">
+                {sortGrades(availableGrades).map((g, index) => (
+                  <div key={index} className="mobile-card-item">
+                    <div className="mobile-card-row">
+                      <input type="text" className="mobile-card-input" value={g.nom} placeholder="Nom du grade" onChange={(e) => {
+                        const newG = [...availableGrades];
+                        newG[index].nom = e.target.value;
+                        setAvailableGrades(newG);
+                      }} />
+                      <button className="btn-delete" style={{ marginLeft: 'auto', flexShrink: 0 }} onClick={() => {
+                        setAvailableGrades(availableGrades.filter((_, i) => i !== index));
+                      }}>×</button>
+                    </div>
+                    <div className="mobile-card-label" style={{ marginBottom: '4px' }}>Fonctions autorisées :</div>
+                    <div className="badges-grid">
+                      {sortFonctions(availableFonctions).map((f, fIdx) => (
+                        <span
+                          key={fIdx}
+                          className={`badge-item ${g.fonctions && g.fonctions.includes(f) ? 'active' : ''}`}
+                          onClick={() => toggleGradeFonction(index, f)}
+                        >
+                          {f}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
               <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'center' }}>
                 <button className="btn btn-print" onClick={() => setAvailableGrades([...availableGrades, { nom: "", fonctions: [] }])}>+ Ajouter un Grade</button>
