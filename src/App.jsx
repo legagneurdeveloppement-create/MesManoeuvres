@@ -1034,7 +1034,7 @@ function App() {
         <div className="settings-container no-print">
           <h2 className="section-title" style={{ textDecoration: 'none', textAlign: 'center', marginBottom: '1rem' }}>Gestion du Personnel</h2>
           
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '2rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
             <button className="btn-small" style={{ background: '#4a5568' }} onClick={handleExportPersonnel}>
               📤 Sauvegarder la liste sur la clé (Export)
             </button>
@@ -1042,6 +1042,15 @@ function App() {
               📥 Charger une liste (Import)
               <input type="file" accept=".json" style={{ display: 'none' }} onChange={handleImportPersonnel} />
             </label>
+            <a 
+              href="/ManoeuvreBip.apk" 
+              download="ManoeuvreBip.apk"
+              className="btn-small"
+              style={{ background: '#10b981', color: 'white', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 'bold' }}
+              title="Optionnel : Application Native Android pour réveil automatique d'écran éteint"
+            >
+              📲 App Bip Native (.apk)
+            </a>
           </div>
 
           <div className="table-responsive">
@@ -1589,15 +1598,6 @@ function App() {
                   >
                     📢 Déclencher les Bips
                   </button>
-                  <a 
-                    href="/ManoeuvreBip.apk" 
-                    download="ManoeuvreBip.apk"
-                    className="btn" 
-                    style={{ background: '#10b981', color: 'white', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px', fontWeight: 'bold' }}
-                    title="Télécharger l'application native Android pour réveil automatique"
-                  >
-                    📲 App Bip (.apk)
-                  </a>
                   <button className="btn btn-print" onClick={handlePrint}>
                     🖨️ Imprimer
                   </button>
